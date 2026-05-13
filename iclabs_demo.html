@@ -1,0 +1,1749 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>IPL-APS · DEMONSTRAÇÃO — Dados Fictícios</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Syne:wght@400;600;700&display=swap');
+:root{
+  --bg:#0d0f14;--bg2:#13161e;--bg3:#1a1e29;--bg4:#1f2436;
+  --border:#262c3d;--border2:#343b52;
+  --text:#e2e6f0;--muted:#7a82a0;--faint:#3d4460;
+  --seg:#1e8a5e;--seg-bg:#0d2b20;
+  --rev:#2a7dd4;--rev-bg:#0a1e35;
+  --pri:#c9920a;--pri-bg:#2e2205;
+  --ava:#c02535;--ava-bg:#2b0a10;
+  --piora-g:#c02535;--piora-m:#d45a1a;--piora-l:#c9920a;
+  --est:#7a82a0;--mel:#1e8a5e;
+  --renal:#5a8fff;--eletro:#a47bff;--hema:#ff6b8a;
+  --inflam:#ff9d4a;--metab:#4bcfae;
+  --gap-c:#c07aff;--gap-bg:#1a0d1f;
+  --tfg:#4bcfae;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
+.shell{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:252px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.main{flex:1;overflow-y:auto;padding:26px 30px}
+.logo{padding:18px 18px 14px;border-bottom:1px solid var(--border)}
+.logo-mark{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}
+.logo-name{font-size:19px;font-weight:700;letter-spacing:-.02em;margin-top:2px}
+.logo-ver{font-size:10px;color:var(--faint);margin-top:3px;font-family:'IBM Plex Mono',monospace}
+.sec-label{padding:12px 14px 6px;font-size:10px;font-family:'IBM Plex Mono',monospace;letter-spacing:.12em;color:var(--faint);text-transform:uppercase}
+.nav{display:flex;align-items:center;gap:9px;padding:8px 14px;margin:1px 7px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;color:var(--muted);transition:all .15s;border:1px solid transparent}
+.nav:hover{background:var(--bg3);color:var(--text)}
+.nav.active{background:var(--bg3);color:var(--text);border-color:var(--border2)}
+.nav-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.badge-count{margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:10px;background:var(--ava-bg);color:var(--ava);border:1px solid var(--ava);border-radius:3px;padding:1px 5px}
+.sidebar-footer{margin-top:auto;padding:12px 14px;border-top:1px solid var(--border)}
+.sf-info{font-size:10px;color:var(--faint);font-family:'IBM Plex Mono',monospace;line-height:1.6;margin-bottom:10px}
+.btn-refresh{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:8px 12px;border-radius:7px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;cursor:pointer;transition:all .18s}
+.btn-refresh:hover{border-color:var(--rev);color:var(--rev);background:var(--rev-bg)}
+.btn-refresh:disabled{opacity:.45;cursor:default}
+.btn-refresh .spin-ico{display:inline-block;animation:spin .7s linear infinite}
+.page{display:none}.page.active{display:block}
+.page-header{margin-bottom:22px}
+.page-title{font-size:21px;font-weight:700;letter-spacing:-.02em}
+.page-sub{font-size:12px;color:var(--muted);margin-top:3px;font-family:'IBM Plex Mono',monospace}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:18px}
+.card-title{font-size:10px;font-family:'IBM Plex Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat{padding:14px 18px}
+.stat-label{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.stat-value{font-size:30px;font-weight:700;letter-spacing:-.03em;margin-top:3px;line-height:1}
+.stat-sub{font-size:11px;color:var(--muted);margin-top:5px;font-family:'IBM Plex Mono',monospace}
+.bdg{display:inline-flex;align-items:center;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;padding:2px 7px;border-radius:4px;letter-spacing:.05em;white-space:nowrap}
+.b-seg{background:var(--seg-bg);color:var(--seg);border:1px solid var(--seg)}
+.b-rev{background:var(--rev-bg);color:var(--rev);border:1px solid var(--rev)}
+.b-pri{background:var(--pri-bg);color:var(--pri);border:1px solid var(--pri)}
+.b-ava{background:var(--ava-bg);color:var(--ava);border:1px solid var(--ava)}
+.b-gap{background:var(--gap-bg);color:var(--gap-c);border:1px solid var(--gap-c)}
+.b-tfg{background:#0d2a25;color:var(--tfg);border:1px solid var(--tfg)}
+.b-ok{background:var(--seg-bg);color:var(--seg);border:1px solid var(--seg)}
+.b-warn{background:var(--pri-bg);color:var(--pri);border:1px solid var(--pri)}
+.b-crit{background:var(--ava-bg);color:var(--ava);border:1px solid var(--ava)}
+.distrib-bar{display:flex;height:7px;border-radius:4px;overflow:hidden;gap:2px;margin:8px 0 12px}
+.distrib-seg{border-radius:2px}
+.distrib-legend{display:flex;gap:12px;flex-wrap:wrap}
+.dl-item{display:flex;align-items:center;gap:5px;font-size:11px;font-family:'IBM Plex Mono',monospace}
+.dl-dot{width:7px;height:7px;border-radius:2px;flex-shrink:0}
+/* Fila */
+.fila-controls{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.fila-search{flex:1;min-width:160px;font-family:'IBM Plex Mono',monospace;font-size:12px;padding:5px 10px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);outline:none}
+.fila-search::placeholder{color:var(--faint)}
+.fila-search:focus{border-color:var(--rev)}
+.fbtn{font-family:'IBM Plex Mono',monospace;font-size:11px;padding:5px 10px;border-radius:5px;border:1px solid var(--border2);background:var(--bg2);color:var(--muted);cursor:pointer;transition:all .15s}
+.fbtn:hover,.fbtn.active{border-color:var(--text);color:var(--text);background:var(--bg3)}
+.fbtn.f-ava.active{border-color:var(--ava);color:var(--ava);background:var(--ava-bg)}
+.fbtn.f-pri.active{border-color:var(--pri);color:var(--pri);background:var(--pri-bg)}
+.fbtn.f-rev.active{border-color:var(--rev);color:var(--rev);background:var(--rev-bg)}
+.fbtn.f-seg.active{border-color:var(--seg);color:var(--seg);background:var(--seg-bg)}
+.fbtn.f-gap.active{border-color:var(--gap-c);color:var(--gap-c);background:var(--gap-bg)}
+/* 7 cols: rank | paciente | IPL+bar | tendência | classif | analito crítico | gaps */
+.fila-hdr,.fila-row{display:grid;grid-template-columns:26px 1.4fr 90px 110px 150px 1fr 72px;gap:0;align-items:center;padding:9px 12px;border-radius:7px;margin-bottom:2px}
+.fila-hdr{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);padding:7px 12px}
+.fila-row{cursor:pointer;transition:background .12s;border:1px solid transparent}
+.fila-row:hover{background:var(--bg3);border-color:var(--border)}
+.rank{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--faint)}
+.pid{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500}
+.score-bar-bg{flex:1;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden}
+.score-bar-fill{height:100%;border-radius:2px;transition:width .4s}
+.tp{display:inline-flex;align-items:center;gap:3px;font-family:'IBM Plex Mono',monospace;font-size:10px;padding:2px 6px;border-radius:3px}
+.tpg{color:var(--piora-g);background:rgba(192,37,53,.12)}
+.tpm{color:var(--piora-m);background:rgba(212,90,26,.12)}
+.tpl{color:var(--piora-l);background:rgba(201,146,10,.12)}
+.tpe{color:var(--est);background:rgba(122,130,160,.1)}
+.tpme{color:var(--mel);background:rgba(30,138,94,.12)}
+.tpsh{color:var(--faint);background:rgba(62,68,96,.2)}
+.gtag{font-family:'IBM Plex Mono',monospace;font-size:10px;padding:2px 6px;border-radius:3px}
+.vig-hdr,.vig-row{display:grid;grid-template-columns:160px 1fr 56px 90px 1fr;align-items:center;gap:8px;padding:8px 12px;border-radius:6px;margin-bottom:3px}
+.vig-hdr{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.07em;color:var(--faint);text-transform:uppercase}
+.vig-row:hover{background:var(--bg3)}
+.prev-bg{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.prev-fill{height:100%;border-radius:3px}
+.sev-dots{display:flex;gap:3px;align-items:center}
+.sev-dot{height:7px;border-radius:2px;min-width:7px}
+.gap-card{padding:11px 14px;background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--gap-c);border-radius:0 8px 8px 0;margin-bottom:5px;display:flex;align-items:flex-start;gap:10px}
+.gap-analyte{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:500;width:100px;flex-shrink:0;color:var(--gap-c)}
+.gap-info{flex:1}
+.gap-tipo{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--muted);margin-bottom:2px;text-transform:uppercase;letter-spacing:.06em}
+.gap-just{font-size:12px;color:var(--text)}
+.tfg-pill{display:inline-flex;align-items:center;gap:6px;background:#0d2a25;border:1px solid var(--tfg);border-radius:6px;padding:5px 12px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--tfg)}
+.tfg-val{font-size:18px;font-weight:700;letter-spacing:-.02em}
+.perfil-hero{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px}
+.perfil-id{font-family:'IBM Plex Mono',monospace;font-size:17px;font-weight:500}
+.perfil-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:5px}
+.meta-tag{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);background:var(--bg3);border:1px solid var(--border);padding:2px 7px;border-radius:4px}
+.ipl-decomp{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.ipl-comp-row{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg3);border-radius:6px}
+.ipl-comp-name{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);width:220px;flex-shrink:0}
+.ipl-comp-bar-bg{flex:1;height:5px;background:var(--bg4);border-radius:3px;overflow:hidden}
+.ipl-comp-bar-fill{height:100%;border-radius:3px;transition:width .5s}
+.ipl-comp-val{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;width:46px;text-align:right}
+/* Analitos alterados no perfil */
+.alt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-top:10px}
+.alt-chip{padding:10px 12px;background:var(--bg3);border-radius:8px;border-left:3px solid}
+.alt-chip-name{font-size:12px;font-weight:600;margin-bottom:3px}
+.alt-chip-val{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700}
+.alt-chip-grp{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.06em}
+/* Cronograma de risco */
+.risk-table{width:100%;border-collapse:collapse;margin-top:8px}
+.risk-table th{font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--faint);padding:6px 10px;text-align:left;border-bottom:1px solid var(--border)}
+.risk-table td{font-size:12px;padding:8px 10px;border-bottom:1px solid var(--border)}
+.risk-table tr:last-child td{border-bottom:none}
+.risk-table tr:hover td{background:var(--bg3)}
+/* Timeline */
+.timeline{position:relative;padding-left:22px}
+.timeline::before{content:'';position:absolute;left:6px;top:8px;bottom:8px;width:1px;background:var(--border)}
+.tl-item{position:relative;margin-bottom:18px}
+.tl-dot{position:absolute;left:-19px;top:4px;width:9px;height:9px;border-radius:50%;border:2px solid var(--bg2)}
+.tl-date{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:5px}
+.tl-score-row{display:flex;align-items:center;gap:9px;margin-bottom:6px}
+.tl-score-num{font-size:26px;font-weight:700;letter-spacing:-.03em;line-height:1}
+.tl-ctx{font-size:11px;color:var(--muted);font-family:'IBM Plex Mono',monospace;margin-bottom:7px}
+.sb-rows{display:flex;flex-direction:column;gap:4px}
+.sb-row{display:flex;align-items:center;gap:7px}
+.sb-label{font-family:'IBM Plex Mono',monospace;font-size:10px;width:88px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;flex-shrink:0}
+.sb-bg{flex:1;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden}
+.sb-fill{height:100%;border-radius:2px}
+.sb-val{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);width:32px;text-align:right}
+.lacuna-dual{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.lacuna-dim{padding:12px 14px;background:var(--bg3);border-radius:8px;border:1px solid var(--border)}
+.lacuna-dim-title{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.lac-tbl-row{display:grid;grid-template-columns:120px 1fr 70px 80px;gap:8px;align-items:center;padding:7px 10px;border-radius:5px;margin-bottom:2px;font-size:12px}
+.lac-tbl-row:hover{background:var(--bg3)}
+.lac-tbl-hdr{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint);text-transform:uppercase;letter-spacing:.07em;padding:4px 10px;margin-bottom:4px;display:grid;grid-template-columns:120px 1fr 70px 80px;gap:8px}
+.vel-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+.vel-card{padding:9px 11px;background:var(--bg3);border-radius:7px;border:1px solid var(--border)}
+.vel-grupo{font-size:10px;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:5px}
+.vel-delta{font-size:17px;font-weight:700;letter-spacing:-.02em;line-height:1}
+.vel-rate{font-size:10px;color:var(--muted);margin-top:3px;font-family:'IBM Plex Mono',monospace}
+.vel-tend{font-size:11px;margin-top:3px}
+.aviso{margin-top:28px;padding:10px 14px;background:rgba(201,146,10,.05);border:1px solid rgba(201,146,10,.18);border-radius:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--pri);line-height:1.6}
+.evol-btn{background:var(--bg3);border:1px solid var(--border);color:var(--muted);border-radius:5px;padding:3px 9px;font-size:10px;font-family:'IBM Plex Mono',monospace;cursor:pointer;transition:.15s}
+.evol-btn:hover{border-color:var(--acc);color:var(--txt)}
+.evol-btn-active{background:var(--acc);border-color:var(--acc);color:#fff}
+.evol-card{transition:box-shadow .15s}
+.evol-card:hover{box-shadow:0 0 0 1px var(--acc)33,0 4px 16px rgba(0,0,0,.3)}
+.sec-gap{margin-top:16px}
+/* Loading */
+#loading{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg);z-index:999;gap:14px}
+.ld-spinner{width:32px;height:32px;border:3px solid var(--border2);border-top-color:var(--rev);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ld-txt{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted)}
+/* Cronograma recomendado */
+.cronograma-row{display:grid;grid-template-columns:1fr 90px 90px 90px;gap:8px;align-items:center;padding:7px 10px;border-radius:6px;font-size:12px}
+.cronograma-row:hover{background:var(--bg3)}
+.cronograma-hdr{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint);text-transform:uppercase;letter-spacing:.07em;padding:4px 10px;display:grid;grid-template-columns:1fr 90px 90px 90px;gap:8px;margin-bottom:4px}
+/* ── Drawer de analito ────────────────────────────────────────────────── */
+#ad-overlay{display:none;position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.45);backdrop-filter:blur(2px)}
+#ad-overlay.open{display:block}
+#ad-drawer{position:fixed;top:0;right:-420px;width:400px;max-width:96vw;height:100%;z-index:901;background:var(--bg2);border-left:1px solid var(--border2);overflow-y:auto;padding:24px 22px 32px;transition:right .22s cubic-bezier(.4,0,.2,1);box-shadow:-6px 0 32px rgba(0,0,0,.35)}
+#ad-drawer.open{right:0}
+.ad-close{position:absolute;top:16px;right:18px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;padding:4px 8px;border-radius:6px}
+.ad-close:hover{background:var(--bg3);color:var(--txt)}
+.ad-nome{font-size:17px;font-weight:700;margin-bottom:2px}
+.ad-grupo{font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:14px}
+.ad-val-row{display:flex;align-items:baseline;gap:8px;padding:10px 14px;background:var(--bg3);border-radius:8px;margin-bottom:12px}
+.ad-val{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:700}
+.ad-uni{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted)}
+.ad-ref{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint);margin-left:auto}
+.ad-sec{margin-bottom:14px}
+.ad-sec-title{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}
+.ad-sec-body{font-size:12px;line-height:1.6;color:var(--txt)}
+.ad-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
+.ad-tag{font-size:10px;padding:2px 8px;border-radius:20px;border:1px solid var(--border2);color:var(--muted);font-family:'IBM Plex Mono',monospace}
+.ad-ref-box{padding:8px 12px;background:var(--bg3);border-radius:6px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--faint);line-height:1.6}
+.alt-chip{cursor:pointer;transition:filter .15s,transform .15s}
+.alt-chip:hover{filter:brightness(1.15);transform:translateY(-1px)}
+</style>
+</head>
+<body>
+<!-- ── Banner de Demonstração ─────────────────────────────────────── -->
+<div style="position:fixed;top:0;left:0;right:0;z-index:999;background:#c9920a;color:#000;
+     font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;
+     text-align:center;padding:5px 12px;letter-spacing:.06em">
+  MODO DEMONSTRAÇÃO · Todos os dados são fictícios · Nenhum paciente real é identificado
+</div>
+<div id="loading" style="display:none"></div>
+
+<div class="shell" style="margin-top:27px">
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-mark">APS · Território</div>
+    <div class="logo-name">IPL-APS</div>
+    <div class="logo-ver" style="color:var(--pri)">DEMONSTRAÇÃO · dados fictícios</div>
+  </div>
+  <div class="sec-label">Território</div>
+  <div class="nav active" data-page="painel" onclick="nav(this)"><span class="nav-dot" style="background:#5a8fff"></span>Painel Geral</div>
+  <div class="nav" data-page="fila" onclick="nav(this)"><span class="nav-dot" style="background:#c02535"></span>Triagem IPL-APS<span class="badge-count" id="fila-badge">0</span></div>
+  <div class="nav" data-page="vigilancia" onclick="nav(this)"><span class="nav-dot" style="background:#ff9d4a"></span>Vigilância Analítica</div>
+  <div class="nav" data-page="gaps" onclick="nav(this)"><span class="nav-dot" style="background:#c07aff"></span>Gaps de Cuidado<span class="badge-count" id="gap-badge" style="background:var(--gap-bg);color:var(--gap-c);border-color:var(--gap-c)">0</span></div>
+  <div class="sec-label">Paciente</div>
+  <div class="nav" data-page="perfil" onclick="nav(this)"><span class="nav-dot" style="background:#4bcfae"></span>Perfil Longitudinal</div>
+  <!-- Seletor de USF (visível só para admin) -->
+  <div id="usf-selector-wrap" style="display:none;padding:8px 12px">
+    <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;
+         margin-bottom:5px;font-family:'IBM Plex Mono',monospace">Território</div>
+    <select id="usf-selector" onchange="trocarUSF(this.value)"
+      style="width:100%;background:var(--bg3);border:1px solid var(--border2);color:var(--text);
+             padding:6px 8px;border-radius:6px;font-size:11px;cursor:pointer">
+    </select>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="sf-info">
+      <span id="ubs-id" style="font-weight:700">—</span><br>
+      <span id="sf-user" style="font-size:10px;color:var(--muted)">Demo</span><br>
+      Atualizado: <span id="ref-date">—</span>
+    </div>
+    <div style="padding:7px 10px;background:var(--bg3);border:1px solid var(--pri);border-radius:7px;
+         font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--pri);line-height:1.55;margin-top:4px">
+      Dados fictícios para fins de demonstração. Nenhum paciente real é identificado.
+    </div>
+  </div>
+</aside>
+
+<main class="main">
+  <!-- PAINEL -->
+  <div class="page active" id="page-painel">
+    <div class="page-header">
+      <div class="page-title">Painel do Território</div>
+      <div class="page-sub" id="painel-sub">—</div>
+    </div>
+    <div class="grid4" id="stat-cards"></div>
+    <div class="sec-gap">
+      <div class="card">
+        <div class="card-title">Distribuição de prioridade</div>
+        <div class="distrib-bar" id="distrib-bar"></div>
+        <div class="distrib-legend" id="distrib-legend"></div>
+      </div>
+    </div>
+    <div class="sec-gap grid2">
+      <div class="card">
+        <div class="card-title">Condições crônicas — frequência no território</div>
+        <div id="cronicas-chart"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Top alterações — território</div>
+        <div id="top-analitos"></div>
+      </div>
+    </div>
+    <div class="sec-gap">
+      <div class="card">
+        <div class="card-title">Pacientes críticos — AVALIAÇÃO CLÍNICA PRIORITÁRIA</div>
+        <div id="criticos-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRIAGEM -->
+  <div class="page" id="page-fila">
+    <div class="page-header">
+      <div class="page-title">Triagem Avançada IPL-APS</div>
+      <div class="page-sub">ordenada por IPL total · score composto auditável com 7 componentes</div>
+    </div>
+    <div class="fila-controls">
+      <input class="fila-search" id="fila-search" placeholder="Buscar paciente..." oninput="renderFila()">
+      <button class="fbtn active" id="fil-todos" onclick="setFiltro('todos',this)">Todos</button>
+      <button class="fbtn f-ava" id="fil-ava" onclick="setFiltro('ava',this)">Avaliação</button>
+      <button class="fbtn f-pri" id="fil-pri" onclick="setFiltro('pri',this)">Prioridade</button>
+      <button class="fbtn f-rev" id="fil-rev" onclick="setFiltro('rev',this)">Revisão</button>
+      <button class="fbtn f-seg" id="fil-seg" onclick="setFiltro('seg',this)">Habitual</button>
+      <button class="fbtn f-gap" id="fil-gap" onclick="setFiltro('gap',this)">Com Gaps</button>
+    </div>
+    <div class="card">
+      <div class="fila-hdr">
+        <span>#</span>
+        <span>Paciente / Condições</span>
+        <span>IPL</span>
+        <span>Tendência</span>
+        <span>Classificação</span>
+        <span>Analito crítico</span>
+        <span>Gaps</span>
+      </div>
+      <div id="fila-rows"></div>
+      <div id="fila-count" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint);padding:8px 12px 0;border-top:1px solid var(--border);margin-top:6px"></div>
+    </div>
+  </div>
+
+  <!-- VIGILÂNCIA -->
+  <div class="page" id="page-vigilancia">
+    <div class="page-header">
+      <div class="page-title">Vigilância Analítica</div>
+      <div class="page-sub">prevalência de alterações por analito — última coleta de cada paciente · <span id="vig-min-n-label" style="font-style:italic"></span></div>
+    </div>
+    <div class="card">
+      <div class="vig-hdr"><span>Analito</span><span>Prevalência</span><span>%</span><span>Alterados/Total</span><span>Padrão</span></div>
+      <div id="vig-rows"></div>
+    </div>
+  </div>
+
+  <!-- GAPS -->
+  <div class="page" id="page-gaps">
+    <div class="page-header">
+      <div class="page-title">Gaps de Cuidado</div>
+      <div class="page-sub">exames essenciais ausentes ou vencidos dado o perfil clínico do paciente</div>
+    </div>
+    <div id="gap-list"></div>
+  </div>
+
+  <!-- PERFIL -->
+  <div class="page" id="page-perfil">
+    <div class="page-header">
+      <div class="page-title">Perfil Longitudinal</div>
+      <div class="page-sub">clique em um paciente na triagem para ver o perfil completo</div>
+    </div>
+    <div id="perfil-content">
+      <div class="card" style="text-align:center;padding:40px;color:var(--faint);font-family:'IBM Plex Mono',monospace;font-size:12px">Nenhum paciente selecionado.</div>
+    </div>
+  </div>
+</main>
+</div>
+
+<script>
+let T = null;
+
+const CL = {
+  "SEGUIMENTO HABITUAL":           {bdg:"b-seg",bar:"var(--seg)",  col:"var(--seg)"},
+  "REVISÃO PROGRAMADA":            {bdg:"b-rev",bar:"var(--rev)",  col:"var(--rev)"},
+  "PRIORIDADE DE ACOMPANHAMENTO":  {bdg:"b-pri",bar:"var(--pri)",  col:"var(--pri)"},
+  "AVALIAÇÃO CLÍNICA PRIORITÁRIA": {bdg:"b-ava",bar:"var(--ava)",  col:"var(--ava)"},
+};
+const GC = {
+  renal:"var(--renal)", eletrolitico:"var(--eletro)",
+  hematologico:"var(--hema)", inflamatorio:"var(--inflam)", metabolico:"var(--metab)"
+};
+const TP_CLS = {
+  "PIORA GRAVE":"tpg","PIORA MODERADA":"tpm","PIORA LEVE":"tpl",
+  "ESTÁVEL":"tpe","MELHORA":"tpme","SEM HISTÓRICO ANTERIOR":"tpsh"
+};
+const COMP_COL = {
+  score_laboratorial_base:"var(--renal)",
+  padroes_sinergicos:     "var(--inflam)",
+  faixa_etaria:           "var(--muted)",
+  tendencia_temporal:     "var(--ava)",
+  lacuna_coleta:          "var(--gap-c)",
+  contexto_clinico:       "var(--metab)",
+  estadio_renal:          "var(--renal)",
+};
+const LACUNA_CLS = {
+  "LACUNA CRÍTICA":"b-crit","ATENÇÃO":"b-warn","COLETA ADEQUADA":"b-ok","ADEQUADA":"b-ok"
+};
+
+function bdg(t,cls){return `<span class="bdg ${cls}">${t}</span>`}
+function tp(t){return `<span class="tp ${TP_CLS[t]||'tpsh'}">${t||'—'}</span>`}
+
+function _evolFiltro(tipo){
+  // Atualiza botões ativos
+  ['all','pior','mel','est'].forEach(k=>{
+    const b=document.getElementById('evol-btn-'+k);
+    if(b) b.classList.remove('evol-btn-active');
+  });
+  const mapBtn={'todos':'all','piora':'pior','melhora':'mel','estavel':'est'};
+  const btn=document.getElementById('evol-btn-'+(mapBtn[tipo]||'all'));
+  if(btn) btn.classList.add('evol-btn-active');
+  // Filtra cards
+  document.querySelectorAll('#evol-grid .evol-card').forEach(c=>{
+    const t=c.dataset.tend||'';
+    const vis=tipo==='todos'||(tipo==='piora'&&t==='piora')||(tipo==='melhora'&&t==='melhora')||(tipo==='estavel'&&(t==='estável'||t==='estavel'||t==='sem dados'));
+    c.style.display=vis?'':'none';
+  });
+}
+function scol(s){return s>=70?"var(--ava)":s>=45?"var(--pri)":s>=25?"var(--rev)":"var(--seg)"}
+
+function nav(el){
+  document.querySelectorAll('.nav').forEach(n=>n.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+el.dataset.page).classList.add('active');
+}
+
+function showPerfil(id){
+  document.querySelectorAll('.nav').forEach(n=>n.classList.remove('active'));
+  document.querySelector('[data-page="perfil"]').classList.add('active');
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-perfil').classList.add('active');
+  renderPerfil(T.pacientes.find(p=>p.id===id));
+}
+
+// ── Refresh (demo — no-op) ─────────────────────────────────────────────────────
+function refreshData(){
+  const btn = document.getElementById('btn-refresh');
+  const ico = document.getElementById('refresh-ico');
+  btn.disabled = true; ico.textContent='✓';
+  setTimeout(()=>{ ico.textContent='↺'; btn.disabled=false; }, 1000);
+}
+
+// ── Painel ────────────────────────────────────────────────────────────────────
+function renderPainel(){
+  const ps = T.pacientes;
+  const _nomeUSF = T.nome_usf || T.id || '—';
+  document.getElementById('ubs-id').textContent = _nomeUSF;
+  document.getElementById('ref-date').textContent = new Date().toLocaleDateString('pt-BR');
+  document.getElementById('painel-sub').textContent =
+    `${_nomeUSF} · ${ps.length} pacientes · ${new Date().toLocaleDateString('pt-BR')}`;
+
+  const alto = ps.filter(p=>["AVALIAÇÃO CLÍNICA PRIORITÁRIA","PRIORIDADE DE ACOMPANHAMENTO"].includes(p.classif)).length;
+  const gaps = ps.reduce((a,p)=>a+p.n_gaps,0);
+  const avgIPL = ps.length ? Math.round(ps.reduce((a,p)=>a+p.ipl,0)/ps.length) : 0;
+  const comGap = ps.filter(p=>p.n_gaps>0).length;
+
+  document.getElementById('stat-cards').innerHTML = `
+    <div class="card stat"><div class="stat-label">Pacientes</div><div class="stat-value">${ps.length}</div><div class="stat-sub">território ativo</div></div>
+    <div class="card stat"><div class="stat-label">Alta Prioridade</div><div class="stat-value" style="color:var(--ava)">${alto}</div><div class="stat-sub">avaliação + prioridade</div></div>
+    <div class="card stat"><div class="stat-label">Gaps de Cuidado</div><div class="stat-value" style="color:var(--gap-c)">${gaps}</div><div class="stat-sub">${comGap} pac. com ≥1 gap</div></div>
+    <div class="card stat"><div class="stat-label">IPL Médio</div><div class="stat-value" style="color:${scol(avgIPL)}">${avgIPL}</div><div class="stat-sub">score composto médio</div></div>`;
+
+  // Distribuição
+  const ord=["SEGUIMENTO HABITUAL","REVISÃO PROGRAMADA","PRIORIDADE DE ACOMPANHAMENTO","AVALIAÇÃO CLÍNICA PRIORITÁRIA"];
+  const distrib={};
+  ps.forEach(p=>{distrib[p.classif]=(distrib[p.classif]||0)+1});
+  let bar='',leg='';
+  ord.forEach(cl=>{
+    const n=distrib[cl]||0,pct=ps.length?Math.round(n/ps.length*100):0,c=CL[cl];
+    if(!c) return;
+    if(n>0) bar+=`<div class="distrib-seg" style="width:${pct}%;background:${c.bar}"></div>`;
+    leg+=`<div class="dl-item"><div class="dl-dot" style="background:${c.bar}"></div><span>${cl.replace('AVALIAÇÃO CLÍNICA ','AVA. ').replace('PRIORIDADE DE ','PRIO. ')} · ${n}</span></div>`;
+  });
+  document.getElementById('distrib-bar').innerHTML=bar;
+  document.getElementById('distrib-legend').innerHTML=leg;
+
+  // Condições crônicas
+  const condFreq={};
+  ps.forEach(p=>(p.cronicas||[]).forEach(c=>{condFreq[c]=(condFreq[c]||0)+1}));
+  const maxCond=Math.max(...Object.values(condFreq),1);
+  document.getElementById('cronicas-chart').innerHTML=Object.entries(condFreq)
+    .sort((a,b)=>b[1]-a[1])
+    .map(([c,n])=>{
+      const pct=Math.round(n/ps.length*100);
+      return `<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;margin-bottom:3px">
+        <span style="font-size:12px;font-weight:600">${c}</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted)">${n} pac · ${pct}%</span>
+      </div><div class="score-bar-bg" style="height:5px"><div class="score-bar-fill" style="width:${pct}%;background:var(--metab)"></div></div></div>`;
+    }).join('') || '<div style="color:var(--faint);font-size:12px">Nenhuma condição inferida.</div>';
+
+  // Top analitos
+  document.getElementById('top-analitos').innerHTML=(T.vigilancia||[]).slice(0,8)
+    .map(v=>{const c=GC[v.group]||"var(--muted)";
+      return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+        <div style="width:120px;font-size:12px;font-weight:600">${v.label}</div>
+        <div style="flex:1;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden"><div style="width:${v.prev}%;height:100%;background:${c};border-radius:2px"></div></div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:${c};width:38px;text-align:right">${v.prev}%</div>
+        <div style="font-size:10px;color:var(--faint);width:26px;text-align:right">${v.n}</div>
+      </div>`;
+    }).join('');
+
+  // Pacientes críticos
+  const criticos = ps.filter(p=>p.classif==="AVALIAÇÃO CLÍNICA PRIORITÁRIA").slice(0,8);
+  document.getElementById('criticos-list').innerHTML = criticos.length
+    ? `<div style="display:flex;flex-direction:column;gap:6px">` + criticos.map(p=>{
+        const diasT = p.dias_coleta!=null?p.dias_coleta+'d':'—';
+        const gapBdg = p.n_gaps>0?`<span class="bdg b-gap" style="margin-left:4px">${p.n_gaps} gap${p.n_gaps>1?'s':''}</span>`:'';
+        return `<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--bg3);border-radius:7px;border-left:3px solid var(--ava);cursor:pointer" onclick="showPerfil('${p.id}')">
+          <div style="flex:1"><div style="font-size:13px;font-weight:600">${p.nome||p.id}</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint)">${p.analito_critico||'—'} · ${diasT} sem coleta</div></div>
+          <div style="font-size:22px;font-weight:700;color:var(--ava)">${p.ipl.toFixed(1)}</div>
+          ${gapBdg}
+          ${tp(p.tendencia_dom)}
+        </div>`;
+      }).join('') + `</div>`
+    : `<div style="color:var(--faint);font-family:'IBM Plex Mono',monospace;font-size:12px;padding:12px 0">Nenhum paciente em avaliação clínica prioritária.</div>`;
+}
+
+// ── Triagem ───────────────────────────────────────────────────────────────────
+let filtroAtivo = 'todos';
+
+function setFiltro(v, el){
+  filtroAtivo=v;
+  document.querySelectorAll('.fila-controls .fbtn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderFila();
+}
+
+function renderFila(){
+  if(!T) return;
+  const ps=[...T.pacientes].sort((a,b)=>b.ipl-a.ipl);
+  const busca = (document.getElementById('fila-search')||{}).value?.trim().toLowerCase()||'';
+
+  const filtered = ps.filter(p=>{
+    if(busca && !(p.nome||p.id).toLowerCase().includes(busca)) return false;
+    if(filtroAtivo==='ava') return p.classif==="AVALIAÇÃO CLÍNICA PRIORITÁRIA";
+    if(filtroAtivo==='pri') return p.classif==="PRIORIDADE DE ACOMPANHAMENTO";
+    if(filtroAtivo==='rev') return p.classif==="REVISÃO PROGRAMADA";
+    if(filtroAtivo==='seg') return p.classif==="SEGUIMENTO HABITUAL";
+    if(filtroAtivo==='gap') return p.n_gaps>0;
+    return true;
+  });
+
+  document.getElementById('fila-badge').textContent =
+    ps.filter(p=>["AVALIAÇÃO CLÍNICA PRIORITÁRIA","PRIORIDADE DE ACOMPANHAMENTO"].includes(p.classif)).length;
+
+  document.getElementById('fila-rows').innerHTML=filtered.map((p,i)=>{
+    const cl=CL[p.classif]||CL["SEGUIMENTO HABITUAL"];
+    const classBdg = bdg(p.classif.replace('AVALIAÇÃO CLÍNICA ','AVA. ').replace('PRIORIDADE DE ','PRIO. DE '),cl.bdg);
+    const gapHtml = p.n_gaps>0
+      ? `<span class="bdg b-gap">${p.n_gaps}g</span>`
+      : `<span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint)">—</span>`;
+    const cronicasHtml = (p.cronicas||[]).slice(0,3).map(c=>
+      `<span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--pri);background:var(--pri-bg);padding:1px 4px;border-radius:3px">${c}</span>`
+    ).join('');
+    const analitoHtml = p.analito_critico && p.analito_critico!=='—'
+      ? `<span style="font-size:12px;color:${GC[p.grupo_critico]||'var(--muted)'}">⬥ ${p.analito_critico}</span>`
+      : `<span style="color:var(--faint);font-size:11px">—</span>`;
+
+    return `<div class="fila-row" onclick="showPerfil('${p.id}')">
+      <span class="rank">${i+1}</span>
+      <div>
+        <div style="font-size:13px;font-weight:600">${p.nome||p.id}</div>
+        <div style="font-size:10px;color:var(--faint);font-family:'IBM Plex Mono',monospace;margin-bottom:2px">${p.id} · ${p.faixa}${p.dt_nasc?` · <span title="Data de nascimento">DN: ${p.dt_nasc}</span>`:''}</div>
+        <div style="display:flex;gap:3px;flex-wrap:wrap">${cronicasHtml}</div>
+      </div>
+      <div>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+          <span style="font-size:17px;font-weight:700;color:${cl.col}">${p.ipl.toFixed(1)}</span>
+        </div>
+        <div class="score-bar-bg"><div class="score-bar-fill" style="width:${p.ipl}%;background:${cl.bar}"></div></div>
+      </div>
+      <div>${tp(p.tendencia_dom)}</div>
+      <div>${classBdg}</div>
+      <div>${analitoHtml}</div>
+      <div>${gapHtml}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('fila-count').textContent =
+    `${filtered.length} de ${ps.length} pacientes`;
+}
+
+// ── Vigilância ────────────────────────────────────────────────────────────────
+function renderVigilancia(){
+  const PADRAO_CL={
+    "PADRÃO TERRITORIAL MUITO ELEVADO":"b-ava","CRÍTICO":"b-crit",
+    "PREVALENTE":"b-warn","ATENÇÃO DIFUSA":"b-rev","NEGLIGENCIÁVEL":"b-ok"
+  };
+  const minN = (T.vigilancia||[])[0]?.min_n || 0;
+  const lbl = document.getElementById('vig-min-n-label');
+  if(lbl && minN) lbl.textContent = `exibindo analitos com ≥ ${minN} pacientes testados`;
+  document.getElementById('vig-rows').innerHTML=(T.vigilancia||[]).map(v=>{
+    const gc=GC[v.group]||"var(--muted)";
+    const sev=`<span style="font-family:'IBM Plex Mono',monospace;font-size:11px">${v.alt}<span style="color:var(--faint)">/${v.n}</span></span>`;
+    return `<div class="vig-row">
+      <span style="font-size:13px;font-weight:600">${v.label}</span>
+      <div class="prev-bg"><div class="prev-fill" style="width:${v.prev}%;background:${gc}"></div></div>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:${gc}">${v.prev}%</span>
+      ${sev}
+      ${bdg(v.padrao,PADRAO_CL[v.padrao]||'b-ok')}
+    </div>`;
+  }).join('');
+}
+
+// ── Gaps ──────────────────────────────────────────────────────────────────────
+function renderGaps(){
+  const total = T.pacientes.reduce((a,p)=>a+p.n_gaps,0);
+  document.getElementById('gap-badge').textContent=total;
+  const GAP_COL={
+    "EXAME AUSENTE PARA CONDIÇÃO CRÔNICA":"var(--gap-c)",
+    "TFG NÃO ESTIMADA (CREATININA AUSENTE)":"var(--tfg)",
+    "EXAME VENCIDO PARA PERFIL DE RISCO":"var(--pri)"
+  };
+  let html='';
+  T.pacientes.filter(p=>p.n_gaps>0).sort((a,b)=>b.ipl-a.ipl).forEach(p=>{
+    const cl=CL[p.classif]||CL["SEGUIMENTO HABITUAL"];
+    html+=`<div style="display:flex;align-items:center;gap:8px;margin:14px 0 7px">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--faint);text-transform:uppercase;letter-spacing:.08em;flex:1">${p.nome||p.id}${p.dt_nasc?` <span style="font-size:10px;text-transform:none;letter-spacing:0"> · DN: ${p.dt_nasc}</span>`:''}</span>
+      ${bdg(p.classif.replace('AVALIAÇÃO CLÍNICA ','AVA. ').replace('PRIORIDADE DE ','PRIO. '),cl.bdg)}
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--gap-c)">${p.n_gaps} gap(s)</span>
+    </div>`;
+    (p.gaps||[]).forEach(g=>{
+      const c=GAP_COL[g.tipo]||"var(--muted)";
+      html+=`<div class="gap-card" style="border-left-color:${c}">
+        <div class="gap-analyte" style="color:${c}">${g.label}</div>
+        <div class="gap-info">
+          <div class="gap-tipo">${g.tipo}${g.condicao?' · '+g.condicao:''}</div>
+          <div class="gap-just">${g.just}</div>
+        </div>
+        ${g.dias!=null?bdg(g.dias+'d',g.dias>g.intervalo*1.5?'b-crit':g.dias>g.intervalo?'b-warn':'b-ok'):''}
+      </div>`;
+    });
+    if(p.tfg){
+      const tfgC=p.tfg<30?"var(--ava)":p.tfg<60?"var(--pri)":"var(--tfg)";
+      html+=`<div style="margin:6px 0 12px">
+        <div class="tfg-pill" style="border-color:${tfgC};color:${tfgC};background:${tfgC}18">
+          <span>TFG CKD-EPI</span><span class="tfg-val">${p.tfg}</span>
+          <span>mL/min/1.73m²</span><span style="color:var(--muted)">·</span>
+          <span>${p.tfg_estadio}</span>
+        </div>
+      </div>`;
+    }
+  });
+  document.getElementById('gap-list').innerHTML=html||
+    `<div class="card" style="text-align:center;padding:30px;color:var(--faint);font-family:'IBM Plex Mono',monospace;font-size:12px">Nenhum gap de cuidado detectado.</div>`;
+}
+
+// ── Perfil Longitudinal ───────────────────────────────────────────────────────
+function renderPerfil(p){
+  if(!p) return;
+  const cl=CL[p.classif]||CL["SEGUIMENTO HABITUAL"];
+  const maxComp=Math.max(...(p.componentes||[]).map(c=>c.contribuicao),1);
+
+  // ─ Cabeçalho
+  let html=`<div class="card" style="margin-bottom:14px">
+    <div class="perfil-hero">
+      <div>
+        <div class="perfil-id">${p.nome||p.id}</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--faint);margin-top:2px">${p.id}</div>
+        <div class="perfil-meta">
+          <span class="meta-tag">Faixa: ${p.faixa}</span>
+          ${p.dt_nasc?`<span class="meta-tag" title="Data de nascimento">DN: ${p.dt_nasc}</span>`:''}
+          ${(p.cronicas||[]).map(c=>`<span class="meta-tag" style="color:var(--pri);border-color:var(--pri)">${c}</span>`).join('')}
+        </div>
+        ${p.medico&&p.medico!=='—'?`<div style="margin-top:6px;font-size:11px;color:var(--muted);font-family:'IBM Plex Mono',monospace">
+          <span style="color:var(--faint);text-transform:uppercase;letter-spacing:.06em;font-size:10px">Médico solicitante</span>
+          <span style="color:var(--txt);margin-left:6px;font-weight:500">${p.medico}</span>
+        </div>`:''}
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:38px;font-weight:700;letter-spacing:-.03em;color:${cl.col}">${p.ipl.toFixed(1)}</div>
+        ${bdg(p.classif,cl.bdg)}
+        <div style="font-size:10px;color:var(--muted);margin-top:4px;font-family:'IBM Plex Mono',monospace">IPL-APS · score composto</div>
+      </div>
+    </div>
+    ${p.tfg?`<div style="margin-top:8px">${(()=>{const c=p.tfg<30?"var(--ava)":p.tfg<60?"var(--pri)":"var(--tfg)";
+      return `<div class="tfg-pill" style="border-color:${c};color:${c};background:${c}18">
+        <span>TFG CKD-EPI</span><span class="tfg-val">${p.tfg}</span>
+        <span>mL/min/1.73m²</span><span style="color:var(--muted)">·</span><span>${p.tfg_estadio||'—'}</span>
+      </div>`;})()}</div>`:''}
+  </div>`;
+
+  // ─ Resumo clínico + analitos alterados + condições com detalhe
+  const analitosAlt = p.analitos_alterados || [];
+  html+=`<div class="card sec-gap" style="margin-bottom:14px">
+    <div class="card-title">Resumo clínico de triagem</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">
+      <div style="padding:10px 14px;background:var(--bg3);border-radius:8px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px">Analito crítico</div>
+        <div style="font-size:15px;font-weight:700;color:${GC[p.grupo_critico]||'var(--muted)'}">${p.analito_critico||'—'}</div>
+        <div style="font-size:10px;color:var(--faint);font-family:'IBM Plex Mono',monospace;margin-top:2px">${p.grupo_critico||'—'}</div>
+      </div>
+      <div style="padding:10px 14px;background:var(--bg3);border-radius:8px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px">Tendência geral</div>
+        <div style="margin-top:4px">${tp(p.tendencia_dom)}</div>
+        <div style="font-size:10px;color:var(--faint);font-family:'IBM Plex Mono',monospace;margin-top:4px">${p.dias_coleta!=null?p.dias_coleta+'d desde coleta':'nunca coletado'}</div>
+      </div>
+      <div style="padding:10px 14px;background:var(--bg3);border-radius:8px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px">Lacuna global</div>
+        <div style="margin-top:4px">${bdg(p.lacuna_global,LACUNA_CLS[p.lacuna_global]||'b-ok')}</div>
+        <div style="font-size:10px;color:var(--faint);font-family:'IBM Plex Mono',monospace;margin-top:4px">${p.n_gaps} gap(s) de cuidado</div>
+      </div>
+    </div>
+
+    ${analitosAlt.length ? `
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">
+      Exames alterados que contribuem para o score (${analitosAlt.length}) <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--faint)">— clique para detalhes clínicos</span>
+    </div>
+    <div class="alt-grid" style="margin-bottom:18px">
+      ${analitosAlt.map(a=>{
+        const gc=GC[a.grupo]||'var(--muted)';
+        const arrow=a.direcao==='ACIMA'?'↑':a.direcao==='ABAIXO'?'↓':'·';
+        const arrowCol=a.direcao==='ACIMA'?'var(--ava)':a.direcao==='ABAIXO'?'var(--rev)':'var(--muted)';
+        const shortNome=a.nome.replace(/^HEMOGRAMA\s*[-–]\s*/i,'').replace(/^URINA\s*[-–]\s*/i,'');
+        const uni=a.unidade?`<span style="font-size:10px;color:var(--muted);margin-left:2px">${a.unidade}</span>`:'';
+        const refLine=a.referencia?`<div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--faint);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${a.referencia}">ref: ${a.referencia}</div>`:'';
+        const idx=_adIdx; _ADDATA[_adIdx++]=a;
+        return `<div class="alt-chip" style="border-left-color:${gc}" onclick="_adOpen(${idx})" title="Ver detalhes clínicos de ${shortNome}">
+          <div class="alt-chip-name" style="color:${gc}">${shortNome}</div>
+          <div class="alt-chip-val">
+            <span style="color:${arrowCol}">${arrow}</span>
+            ${a.valor}${uni}
+          </div>
+          ${refLine}
+          <div class="alt-chip-grp" style="display:flex;justify-content:space-between;margin-top:3px">
+            <span>${a.grupo}</span>
+            <span style="color:var(--pri)">+${a.peso}pt</span>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>` : `<div style="font-size:12px;color:var(--faint);margin-bottom:18px;font-family:'IBM Plex Mono',monospace">Nenhum analito alterado registrado.</div>`}
+
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Condições crônicas inferidas</div>
+    ${(p.cronicas_detail||[]).length
+      ? (p.cronicas_detail||[]).map(cd=>{
+          const analStr = (cd.analitos||[]).map(a=>{
+            const arrow=a.direcao==='ACIMA'?'↑':a.direcao==='ABAIXO'?'↓':'';
+            const arrowCol=a.direcao==='ACIMA'?'var(--ava)':a.direcao==='ABAIXO'?'var(--rev)':'var(--muted)';
+            const sNome=a.nome.replace(/^HEMOGRAMA\s*[-–]\s*/i,'').replace(/^URINA\s*[-–]\s*/i,'');
+            return `<span style="font-family:'IBM Plex Mono',monospace;font-size:10px;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padding:2px 7px;white-space:nowrap">
+              ${sNome} <span style="color:${arrowCol}">${arrow} ${a.valor}</span>
+            </span>`;
+          }).join('');
+          return `<div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:7px;flex-wrap:wrap">
+            <span class="bdg b-pri" style="flex-shrink:0">${cd.condicao}</span>
+            <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center">${analStr||'<span style="font-size:10px;color:var(--faint)">sem detalhes</span>'}</div>
+          </div>`;
+        }).join('')
+      : `<span style="font-size:12px;color:var(--faint)">Nenhuma condição crônica inferida — todos os analitos avaliados estão dentro dos limites esperados.</span>`}
+  </div>`;
+
+  // ─ Padrões sinérgicos detectados
+  if((p.padroes_detectados||[]).length){
+    html+=`<div class="card sec-gap" style="margin-bottom:14px">
+      <div class="card-title">Padrões Clínicos Detectados</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;padding:4px 0">`;
+    (p.padroes_detectados||[]).forEach(pad=>{
+      html+=`<span style="background:var(--alert-bg,#fff3cd);border:1px solid #f0c040;color:#7a5000;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600">${pad}</span>`;
+    });
+    html+=`</div></div>`;
+  }
+
+  // ─ Decomposição IPL
+  html+=`<div class="card sec-gap" style="margin-bottom:14px">
+    <div class="card-title">Decomposição IPL-APS — 7 componentes auditáveis</div>
+    <div class="ipl-decomp">`;
+  const COMP_LABEL = {
+    score_laboratorial_base:    "Score laboratorial base",
+    padroes_sinergicos:         "Padrões sinérgicos",
+    faixa_etaria:               "Componente etário",
+    tendencia_temporal:         "Tendência temporal",
+    lacuna_coleta:              "Lacuna de coleta",
+    contexto_clinico:           "Multimorbidade",
+    estadio_renal:              "Estádio renal (TFGe)",
+  };
+  (p.componentes||[]).forEach(c=>{
+    const col=COMP_COL[c.nome]||"var(--muted)";
+    const pct=Math.round(c.contribuicao/maxComp*100);
+    html+=`<div class="ipl-comp-row">
+      <div class="ipl-comp-name">${COMP_LABEL[c.nome]||c.nome.replace(/_/g,' ')}</div>
+      <div style="flex:1;font-size:10px;color:var(--faint);font-family:'IBM Plex Mono',monospace;padding-right:8px">${c.desc||''}</div>
+      <div class="ipl-comp-bar-bg" style="max-width:120px"><div class="ipl-comp-bar-fill" style="width:${pct}%;background:${col}"></div></div>
+      <div class="ipl-comp-val" style="color:${col}">${c.contribuicao.toFixed(1)}</div>
+    </div>`;
+  });
+  const soma=(p.componentes||[]).reduce((a,c)=>a+c.contribuicao,0);
+  const ipl_comprimido = Math.round(100*(1-Math.exp(-soma/90))*10)/10;
+  html+=`</div><div style="margin-top:8px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);padding:8px 12px;background:var(--bg3);border-radius:6px">
+    Σ bruta: <strong>${soma.toFixed(1)}</strong>
+    <span style="color:var(--faint);margin:0 6px">→</span>
+    100 × (1 − e<sup>−${soma.toFixed(0)}/90</sup>)
+    <span style="color:var(--faint);margin:0 6px">=</span>
+    IPL: <strong style="color:${cl.col}">${p.ipl.toFixed(1)}</strong>
+    <span style="color:var(--faint);font-size:10px;margin-left:8px">(compressão exponencial — escores brutos altos geram diferenciação real)</span>
+  </div></div>`;
+
+  // ─ Tendência por grupo
+  html+=`<div class="card sec-gap" style="margin-bottom:14px">
+    <div class="card-title">Tendência por grupo fisiopatológico — velocidade de deterioração</div>
+    <div class="vel-grid">`;
+  (p.tendencias||[]).forEach(t=>{
+    const col=t.tend.startsWith("PIORA GRAVE")?"var(--piora-g)":t.tend.startsWith("PIORA MODERADA")?"var(--piora-m)":t.tend.startsWith("PIORA LEVE")?"var(--piora-l)":t.tend==="MELHORA"?"var(--mel)":"var(--est)";
+    const gc=GC[t.grupo]||"var(--muted)";
+    const velStr=t.vel!=null&&t.vel!==0?`${Math.abs(t.vel).toFixed(3)} pts/dia`:'sem variação';
+    html+=`<div class="vel-card">
+      <div class="vel-grupo" style="color:${gc}">${t.grupo}</div>
+      <div class="vel-delta" style="color:${col}">${t.delta>=0?'+':''}${t.delta.toFixed(1)}</div>
+      <div class="vel-rate">${velStr}</div>
+      <div class="vel-tend">${tp(t.tend)}</div>
+    </div>`;
+  });
+  html+=`</div></div>`;
+
+  // ─ Gaps de cuidado detalhados
+  if((p.gaps||[]).length){
+    const lgCls=LACUNA_CLS[p.lacuna_global]||'b-ok';
+    const laCls=LACUNA_CLS[p.lacuna_analitica]||'b-ok';
+    html+=`<div class="card sec-gap" style="margin-bottom:14px">
+      <div class="card-title">Lacuna analítica — exames essenciais</div>
+      <div class="lacuna-dual">
+        <div class="lacuna-dim">
+          <div class="lacuna-dim-title">Global — última coleta</div>
+          ${bdg(p.lacuna_global,lgCls)}
+          <div style="margin-top:8px;font-size:12px">${p.dias_coleta!=null?p.dias_coleta+'d':'nunca'} desde última coleta</div>
+        </div>
+        <div class="lacuna-dim">
+          <div class="lacuna-dim-title">Analítica — por intervalo esperado</div>
+          ${bdg(p.lacuna_analitica,laCls)}
+          <div style="margin-top:8px;font-size:12px">${p.n_gaps} gap(s) detectado(s)</div>
+        </div>
+      </div>
+      <div class="lac-tbl-hdr"><span>Analito</span><span>Justificativa</span><span>Dias</span><span>Condição</span></div>
+      ${(p.gaps||[]).map(g=>{
+        const c=g.tipo.includes("CRÔNICA")?"var(--gap-c)":g.tipo.includes("TFG")?"var(--tfg)":"var(--pri)";
+        return `<div class="lac-tbl-row">
+          <span style="font-weight:600;color:${c}">${g.label}</span>
+          <span style="font-size:11px;color:var(--muted)">${g.just}</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:11px">${g.dias!=null?g.dias+'d':'—'}</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:${c}">${g.condicao||'—'}</span>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }
+
+  // ─ Evolução analítica (comparativo histórico por analito)
+  const evol = (p.evolucao_analitica||[]);
+  if(evol.length){
+    html+=`<div class="card sec-gap" style="margin-bottom:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div class="card-title" style="margin:0">Evolução analítica — comparativo histórico</div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <button id="evol-btn-all"  onclick="_evolFiltro('todos')"    class="evol-btn evol-btn-active">Todos (${evol.length})</button>
+          <button id="evol-btn-pior" onclick="_evolFiltro('piora')"    class="evol-btn">Piora</button>
+          <button id="evol-btn-mel"  onclick="_evolFiltro('melhora')"  class="evol-btn">Melhora</button>
+          <button id="evol-btn-est"  onclick="_evolFiltro('estavel')"  class="evol-btn">Estável</button>
+        </div>
+      </div>
+      <div style="font-size:10px;color:var(--faint);margin-bottom:12px;font-family:'IBM Plex Mono',monospace">
+        ${evol.length} analito(s) com ≥2 coletas · pontos = linha do tempo · barra = magnitude do último valor
+      </div>
+      <div id="evol-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px">`;
+
+    evol.forEach(e=>{
+      const gc  = GC[e.grupo]||'var(--muted)';
+      const col = e.tend==='PIORA'?'var(--ava)':e.tend==='MELHORA'?'var(--ok)':'var(--muted)';
+      const arrow = e.tend==='PIORA'?'↑':'  ↓';// will use custom
+      const ico = e.tend==='PIORA'?'↗':'↙';
+      const tendIco = e.tend==='PIORA'?`<span style="color:var(--ava);font-size:13px">↗</span>`:
+                      e.tend==='MELHORA'?`<span style="color:var(--ok);font-size:13px">↘</span>`:
+                      `<span style="color:var(--muted);font-size:13px">→</span>`;
+
+      // Miniatura sparkline SVG
+      const pts = e.pontos.filter(pt=>pt.valor!=null);
+      let sparkSvg = '';
+      if(pts.length>=2){
+        const vals = pts.map(pt=>pt.valor);
+        const mn=Math.min(...vals), mx=Math.max(...vals);
+        const range = mx-mn || 1;
+        const W=120, H=32, pad=3;
+        const xs = pts.map((_,i)=>pad + i*(W-2*pad)/(pts.length-1));
+        const ys = pts.map(pt=>H-pad-(((pt.valor||mn)-mn)/range)*(H-2*pad));
+        const polyPts = xs.map((x,i)=>`${x},${ys[i]}`).join(' ');
+        // fill area
+        const fillPts = `${xs[0]},${H} `+polyPts+` ${xs[xs.length-1]},${H}`;
+        const lineCol = e.tend==='PIORA'?'#f85149':e.tend==='MELHORA'?'#3fb950':'#6e7681';
+        sparkSvg = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="overflow:visible">
+          <polygon points="${fillPts}" fill="${lineCol}" fill-opacity="0.12"/>
+          <polyline points="${polyPts}" fill="none" stroke="${lineCol}" stroke-width="1.5" stroke-linejoin="round"/>
+          ${xs.map((x,i)=>`<circle cx="${x}" cy="${ys[i]}" r="2.5" fill="${lineCol}"><title>${pts[i].data}: ${pts[i].valor} ${e.unidade}</title></circle>`).join('')}
+        </svg>`;
+      }
+
+      // Delta display
+      const dSign = e.delta!=null?(e.delta>0?'+':''):'';
+      const dPct  = e.delta_pct!=null?` (${e.delta>0?'+':''}${e.delta_pct}%)`:'';
+      const deltaStr = e.delta!=null?`${dSign}${e.delta} ${e.unidade}${dPct}`:'—';
+
+      // Status da última coleta
+      const stLast = e.pontos[e.pontos.length-1]?.status||'';
+      const stLastCol = 'ACIMA' in stLast||stLast.includes('ACIMA')?'var(--ava)':
+                         stLast.includes('ABAIXO')?'var(--pri)':'var(--ok)';
+
+      html+=`<div class="evol-card" data-tend="${e.tend.toLowerCase()}" style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;width:3px;height:100%;background:${gc};border-radius:10px 0 0 10px"></div>
+        <div style="padding-left:6px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+            <div>
+              <div style="font-weight:600;font-size:12px;color:var(--txt)">${e.analito}</div>
+              <div style="font-size:10px;color:${gc};font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.05em">${e.grupo}</div>
+            </div>
+            <div style="text-align:right">
+              ${tendIco}
+              <div style="font-size:9px;color:${col};font-family:'IBM Plex Mono',monospace;margin-top:2px">${e.tend}</div>
+            </div>
+          </div>
+
+          <div style="margin-bottom:8px">${sparkSvg}</div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px">
+            <div style="background:var(--bg3);border-radius:6px;padding:6px 8px">
+              <div style="font-size:9px;color:var(--faint);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.05em">1ª coleta</div>
+              <div style="font-size:13px;font-weight:600;color:var(--muted);margin-top:2px">${e.v_primeira??'—'} <span style="font-size:10px;font-weight:400">${e.unidade}</span></div>
+              <div style="font-size:9px;color:var(--faint)">${e.pontos[0]?.data?new Date(e.pontos[0].data+'T12:00:00').toLocaleDateString('pt-BR'):''}</div>
+            </div>
+            <div style="background:var(--bg3);border-radius:6px;padding:6px 8px;border:1px solid ${col}22">
+              <div style="font-size:9px;color:var(--faint);font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.05em">última coleta</div>
+              <div style="font-size:13px;font-weight:700;color:${col};margin-top:2px">${e.v_ultima??'—'} <span style="font-size:10px;font-weight:400">${e.unidade}</span></div>
+              <div style="font-size:9px;color:var(--faint)">${e.pontos[e.pontos.length-1]?.data?new Date(e.pontos[e.pontos.length-1].data+'T12:00:00').toLocaleDateString('pt-BR'):''}</div>
+            </div>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:${col};font-weight:600">${deltaStr}</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--faint)">${e.n_coletas} coleta(s) · ref: ${e.ref||'—'}</div>
+          </div>
+        </div>
+      </div>`;
+    });
+
+    html+=`</div></div>`;
+  }
+
+  // ─ Histórico de coletas
+  html+=`<div class="card sec-gap" style="margin-bottom:14px">
+    <div class="card-title">Histórico de coletas — evolução temporal do score</div>
+    <div class="timeline">`;
+  [...(p.historico||[])].reverse().forEach((h,i)=>{
+    const hcl=CL[h.classif]||CL["SEGUIMENTO HABITUAL"];
+    html+=`<div class="tl-item">
+      <div class="tl-dot" style="background:${hcl.bar}"></div>
+      <div class="tl-date">${new Date(h.data+'T12:00:00').toLocaleDateString('pt-BR')}${i===0?' · última coleta':''}</div>
+      <div class="tl-score-row">
+        <span class="tl-score-num" style="color:${hcl.col}">${h.score.toFixed(1)}</span>
+        ${bdg(h.classif,hcl.bdg)}
+      </div>
+      <div class="tl-ctx">${h.ctx}</div>
+      <div class="sb-rows">`;
+    [["hematologico","var(--hema)"],["renal","var(--renal)"],["eletrolitico","var(--eletro)"],["inflamatorio","var(--inflam)"],["metabolico","var(--metab)"]].forEach(([g,gc])=>{
+      const s=(h.sub&&h.sub[g])||0;
+      html+=`<div class="sb-row">
+        <div class="sb-label">${g.substring(0,8)}</div>
+        <div class="sb-bg"><div class="sb-fill" style="width:${Math.min(s/70*100,100)}%;background:${gc}"></div></div>
+        <div class="sb-val">${s.toFixed(1)}</div>
+      </div>`;
+    });
+    html+=`</div></div>`;
+  });
+  html+=`</div></div>`;
+  html+=`<div class="aviso">⚠  ${p.nome||p.id} — IPL-APS: índice exploratório de prioridade para acompanhamento na APS. Não realiza diagnóstico, não define conduta isoladamente e não substitui avaliação clínica profissional. TFG estimada por CKD-EPI 2021 — informativo, não diagnóstico. Condições crônicas são inferidas a partir de analitos laboratoriais ALTERADOS, não por diagnóstico clínico confirmado.</div>`;
+  document.getElementById('perfil-content').innerHTML=html;
+}
+
+// ── MODO DEMONSTRAÇÃO — sem autenticação, dados fictícios ────────────────────
+// Todos os identificadores são codigos genéricos (A001…A020).
+// Nenhum dado real de paciente é incluído neste arquivo.
+
+function refreshData(){ /* no-op em modo demo */ }
+function doLogout(){ /* no-op */ }
+
+// ── Dados fictícios ───────────────────────────────────────────────────────────
+T = {
+  id: "usf_demo",
+  nome_usf: "USF Demonstração",
+  pacientes: [
+    // ── AVALIAÇÃO CLÍNICA PRIORITÁRIA ────────────────────────────────────────
+    { id:"A001", nome:"Paciente A001", faixa:"60–79 anos", dt_nasc:"1952-04-10",
+      ipl:95.2, classif:"AVALIAÇÃO CLÍNICA PRIORITÁRIA",
+      analito_critico:"Creatinina", grupo_critico:"renal",
+      tendencia_dom:"PIORA GRAVE", dias_coleta:45, n_gaps:7,
+      lacuna_global:"ATENÇÃO", lacuna_analitica:"LACUNA CRÍTICA",
+      medico:"Dr. Demo Silva", tfg:28, tfg_estadio:"G4",
+      cronicas:["DM2","DRC","Gota"],
+      padroes_detectados:["Nefropatia diabética","DRC + Anemia"],
+      cronicas_detail:[
+        {condicao:"DM2",   analitos:[{nome:"HEMOGLOBINA GLICADA",direcao:"ACIMA",valor:"9.2"},{nome:"GLICOSE MÉDIA ESTIMADA",direcao:"ACIMA",valor:"215"}]},
+        {condicao:"DRC",   analitos:[{nome:"CREATININA",direcao:"ACIMA",valor:"1.9"},{nome:"TAXA DE FILTRAÇÃO GLOMERULAR ESTIMADA",direcao:"ABAIXO",valor:"28"}]},
+        {condicao:"Gota",  analitos:[{nome:"ÁCIDO ÚRICO",direcao:"ACIMA",valor:"10.1"}]}
+      ],
+      analitos_alterados:[
+        {nome:"CREATININA",grupo:"renal",direcao:"ACIMA",valor:"1.9",unidade:"mg/dL",referencia:"0,6 – 1,2",peso:36.1},
+        {nome:"UREIA",grupo:"renal",direcao:"ACIMA",valor:"82",unidade:"mg/dL",referencia:"15 – 43",peso:25.9},
+        {nome:"HEMOGLOBINA GLICADA",grupo:"metabolico",direcao:"ACIMA",valor:"9.2",unidade:"%",referencia:"4,0 – 5,6",peso:22.0},
+        {nome:"GLICOSE MÉDIA ESTIMADA",grupo:"metabolico",direcao:"ACIMA",valor:"215",unidade:"mg/dL",referencia:"< 154",peso:18.0},
+        {nome:"ÁCIDO ÚRICO",grupo:"metabolico",direcao:"ACIMA",valor:"10.1",unidade:"mg/dL",referencia:"2,5 – 6,2",peso:14.0},
+        {nome:"TRIGLICÉRIDES",grupo:"metabolico",direcao:"ACIMA",valor:"320",unidade:"mg/dL",referencia:"< 150",peso:9.0},
+        {nome:"TAXA DE FILTRAÇÃO GLOMERULAR ESTIMADA",grupo:"renal",direcao:"ABAIXO",valor:"28",unidade:"mL/min/1,73m²",referencia:"≥ 60",peso:40.0},
+        {nome:"POTASSIO",grupo:"eletrolitico",direcao:"ACIMA",valor:"5.6",unidade:"mmol/L",referencia:"3,5 – 5,1",peso:22.0}
+      ],
+      componentes:[
+        {nome:"score_laboratorial_base",contribuicao:85.2,desc:"8 analitos alterados — creatinina, ureia, TFGe, HbA1c e outros"},
+        {nome:"estadio_renal",contribuicao:40.0,desc:"TFGe 28 mL/min → estadio G4"},
+        {nome:"contexto_clinico",contribuicao:28.0,desc:"3 condições crônicas inferidas"},
+        {nome:"padroes_sinergicos",contribuicao:22.0,desc:"Nefropatia diabética + DRC + anemia"},
+        {nome:"lacuna_coleta",contribuicao:18.0,desc:"7 gaps de cuidado detectados"},
+        {nome:"tendencia_temporal",contribuicao:55.0,desc:"Piora grave — 45d entre coletas"},
+        {nome:"faixa_etaria",contribuicao:8.0,desc:"Faixa 60–79 anos"}
+      ],
+      tendencias:[
+        {grupo:"renal",tend:"PIORA GRAVE",delta:38.4,vel:0.85},
+        {grupo:"metabolico",tend:"PIORA MODERADA",delta:18.2,vel:0.40},
+        {grupo:"eletrolitico",tend:"PIORA LEVE",delta:5.1,vel:0.11},
+        {grupo:"hematologico",tend:"ESTÁVEL",delta:0.0,vel:0},
+        {grupo:"inflamatorio",tend:"ESTÁVEL",delta:0.0,vel:0}
+      ],
+      gaps:[
+        {label:"Glicose",tipo:"EXAME VENCIDO PARA PERFIL DE RISCO",condicao:"DM2",just:"Glicose: 120d sem coleta (intervalo: 30d) — essencial para DM2.",dias:120,intervalo:30},
+        {label:"HbA1c",tipo:"EXAME VENCIDO PARA PERFIL DE RISCO",condicao:"DM2",just:"HbA1c: 120d sem coleta (intervalo: 90d) — essencial para DM2.",dias:120,intervalo:90},
+        {label:"Creatinina",tipo:"EXAME VENCIDO PARA PERFIL DE RISCO",condicao:"DRC",just:"Creatinina: 120d sem coleta (intervalo: 30d) — essencial para DRC.",dias:120,intervalo:30},
+        {label:"Ureia",tipo:"EXAME VENCIDO PARA PERFIL DE RISCO",condicao:"DRC",just:"Ureia: 120d sem coleta (intervalo: 30d) — essencial para DRC.",dias:120,intervalo:30},
+        {label:"Hemoglobina",tipo:"EXAME AUSENTE PARA CONDIÇÃO CRÔNICA",condicao:"Anemia",just:"Hemoglobina: nunca coletada — rastreio indicado para perfil DRC.",dias:null,intervalo:90},
+        {label:"Ferritina",tipo:"EXAME AUSENTE PARA CONDIÇÃO CRÔNICA",condicao:"Anemia",just:"Ferritina: nunca coletada — rastreio indicado para perfil DRC.",dias:null,intervalo:180},
+        {label:"TFGe",tipo:"TFG NÃO ESTIMADA (CREATININA AUSENTE)",condicao:"DRC",just:"TFGe: estimativa vencida há 120d (intervalo: 30d).",dias:120,intervalo:30}
+      ],
+      historico:[
+        {data:"2026-01-10",score:88.4,classif:"AVALIAÇÃO CLÍNICA PRIORITÁRIA",ctx:"Creatinina 1.7 · HbA1c 8.8 · TFGe 34",sub:{renal:62,metabolico:48,eletrolitico:12,hematologico:8,inflamatorio:4}},
+        {data:"2025-09-05",score:74.2,classif:"PRIORIDADE DE ACOMPANHAMENTO",ctx:"Creatinina 1.4 · HbA1c 8.1 · TFGe 42",sub:{renal:44,metabolico:38,eletrolitico:6,hematologico:5,inflamatorio:3}}
+      ],
+      evolucao_analitica:[
+        {analito:"Creatinina",grupo:"renal",unidade:"mg/dL",tend:"PIORA",delta:0.5,delta_pct:36,v_primeira:1.4,v_ultima:1.9,n_coletas:3,ref:"0,6–1,2",
+          pontos:[{data:"2025-03-10",valor:1.4,status:"ACIMA"},{data:"2025-09-05",valor:1.7,status:"ACIMA"},{data:"2026-01-10",valor:1.9,status:"ACIMA"}]},
+        {analito:"HbA1c",grupo:"metabolico",unidade:"%",tend:"PIORA",delta:1.1,delta_pct:14,v_primeira:8.1,v_ultima:9.2,n_coletas:3,ref:"4,0–5,6",
+          pontos:[{data:"2025-03-10",valor:8.1,status:"ACIMA"},{data:"2025-09-05",valor:8.8,status:"ACIMA"},{data:"2026-01-10",valor:9.2,status:"ACIMA"}]},
+        {analito:"TFGe",grupo:"renal",unidade:"mL/min",tend:"PIORA",delta:-14,delta_pct:-33,v_primeira:42,v_ultima:28,n_coletas:3,ref:"≥ 60",
+          pontos:[{data:"2025-03-10",valor:42,status:"ABAIXO"},{data:"2025-09-05",valor:34,status:"ABAIXO"},{data:"2026-01-10",valor:28,status:"ABAIXO"}]},
+        {analito:"Ácido Úrico",grupo:"metabolico",unidade:"mg/dL",tend:"PIORA",delta:2.3,delta_pct:30,v_primeira:7.8,v_ultima:10.1,n_coletas:2,ref:"2,5–6,2",
+          pontos:[{data:"2025-03-10",valor:7.8,status:"ACIMA"},{data:"2026-01-10",valor:10.1,status:"ACIMA"}]}
+      ]
+    },
+    { id:"A002", nome:"Paciente A002", faixa:"60–79 anos", dt_nasc:"1959-11-22",
+      ipl:91.5, classif:"AVALIAÇÃO CLÍNICA PRIORITÁRIA",
+      analito_critico:"Hemoglobina Glicada", grupo_critico:"metabolico",
+      tendencia_dom:"SEM HISTÓRICO ANTERIOR", dias_coleta:18, n_gaps:4,
+      lacuna_global:"ATENÇÃO", lacuna_analitica:"LACUNA CRÍTICA",
+      medico:"Dra. Demo Souza", tfg:null, tfg_estadio:null,
+      cronicas:["DM2","Anemia","DLP"],
+      padroes_detectados:["Síndrome metabólica"],
+      cronicas_detail:[
+        {condicao:"DM2",  analitos:[{nome:"HEMOGLOBINA GLICADA",direcao:"ACIMA",valor:"10.4"},{nome:"GLICOSE MÉDIA ESTIMADA",direcao:"ACIMA",valor:"251"}]},
+        {condicao:"Anemia",analitos:[{nome:"HEMOGLOBINA",direcao:"ABAIXO",valor:"9.8"},{nome:"FERRITINA",direcao:"ABAIXO",valor:"8"}]},
+        {condicao:"DLP", analitos:[{nome:"TRIGLICÉRIDES",direcao:"ACIMA",valor:"290"},{nome:"FRAÇÃO DO COLESTEROL - VLDL",direcao:"ACIMA",valor:"58"}]}
+      ],
+      analitos_alterados:[
+        {nome:"HEMOGLOBINA GLICADA",grupo:"metabolico",direcao:"ACIMA",valor:"10.4",unidade:"%",referencia:"4,0 – 5,6",peso:28.0},
+        {nome:"GLICOSE MÉDIA ESTIMADA",grupo:"metabolico",direcao:"ACIMA",valor:"251",unidade:"mg/dL",referencia:"< 154",peso:22.0},
+        {nome:"HEMOGLOBINA",grupo:"hematologico",direcao:"ABAIXO",valor:"9.8",unidade:"g/dL",referencia:"12,0 – 16,0",peso:16.0},
+        {nome:"FERRITINA",grupo:"hematologico",direcao:"ABAIXO",valor:"8",unidade:"ng/mL",referencia:"12 – 150",peso:14.0},
+        {nome:"VCM",grupo:"hematologico",direcao:"ABAIXO",valor:"72",unidade:"fL",referencia:"80 – 100",peso:8.0},
+        {nome:"TRIGLICÉRIDES",grupo:"metabolico",direcao:"ACIMA",valor:"290",unidade:"mg/dL",referencia:"< 150",peso:10.0},
+        {nome:"FRAÇÃO DO COLESTEROL - VLDL",grupo:"metabolico",direcao:"ACIMA",valor:"58",unidade:"mg/dL",referencia:"< 30",peso:9.0},
+        {nome:"LDL",grupo:"metabolico",direcao:"ACIMA",valor:"148",unidade:"mg/dL",referencia:"< 130",peso:7.0}
+      ],
+      componentes:[
+        {nome:"score_laboratorial_base",contribuicao:78.0,desc:"8 analitos alterados — HbA1c, Hemoglobina, Ferritina e outros"},
+        {nome:"contexto_clinico",contribuicao:24.0,desc:"3 condições crônicas inferidas"},
+        {nome:"padroes_sinergicos",contribuicao:18.0,desc:"Síndrome metabólica"},
+        {nome:"lacuna_coleta",contribuicao:14.0,desc:"4 gaps de cuidado"},
+        {nome:"tendencia_temporal",contribuicao:0.0,desc:"Sem histórico anterior"},
+        {nome:"estadio_renal",contribuicao:0.0,desc:"TFGe não disponível"},
+        {nome:"faixa_etaria",contribuicao:8.0,desc:"Faixa 60–79 anos"}
+      ],
+      tendencias:[
+        {grupo:"metabolico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},
+        {grupo:"hematologico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},
+        {grupo:"renal",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},
+        {grupo:"eletrolitico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},
+        {grupo:"inflamatorio",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null}
+      ],
+      gaps:[
+        {label:"HbA1c",tipo:"EXAME VENCIDO PARA PERFIL DE RISCO",condicao:"DM2",just:"HbA1c: 18d sem coleta (intervalo: 90d) — dentro do prazo, mas sem histórico.",dias:18,intervalo:90},
+        {label:"Glicose",tipo:"EXAME VENCIDO PARA PERFIL DE RISCO",condicao:"DM2",just:"Glicose: 18d sem coleta (intervalo: 30d).",dias:18,intervalo:30},
+        {label:"Ferritina",tipo:"EXAME AUSENTE PARA CONDIÇÃO CRÔNICA",condicao:"Anemia",just:"Ferritina: nunca coletada em série — controle necessário.",dias:null,intervalo:180},
+        {label:"Reticulócitos",tipo:"EXAME AUSENTE PARA CONDIÇÃO CRÔNICA",condicao:"Anemia",just:"Reticulócitos: nunca coletados — necessário para classificar anemia.",dias:null,intervalo:90}
+      ],
+      historico:[],
+      evolucao_analitica:[]
+    },
+    { id:"A003", nome:"Paciente A003", faixa:"60–79 anos", dt_nasc:"1956-07-03",
+      ipl:89.3, classif:"AVALIAÇÃO CLÍNICA PRIORITÁRIA",
+      analito_critico:"Creatinina", grupo_critico:"renal",
+      tendencia_dom:"PIORA MODERADA", dias_coleta:32, n_gaps:5,
+      lacuna_global:"ATENÇÃO", lacuna_analitica:"LACUNA CRÍTICA",
+      medico:"Dr. Demo Nunes", tfg:35, tfg_estadio:"G3b",
+      cronicas:["DRC","Anemia"],
+      padroes_detectados:["DRC + Anemia"],
+      cronicas_detail:[
+        {condicao:"DRC",  analitos:[{nome:"CREATININA",direcao:"ACIMA",valor:"2.1"},{nome:"TAXA DE FILTRAÇÃO GLOMERULAR ESTIMADA",direcao:"ABAIXO",valor:"35"}]},
+        {condicao:"Anemia",analitos:[{nome:"HEMOGLOBINA",direcao:"ABAIXO",valor:"10.2"},{nome:"FERRITINA",direcao:"ACIMA",valor:"420"}]}
+      ],
+      analitos_alterados:[
+        {nome:"CREATININA",grupo:"renal",direcao:"ACIMA",valor:"2.1",unidade:"mg/dL",referencia:"0,6 – 1,2",peso:40.0},
+        {nome:"TAXA DE FILTRAÇÃO GLOMERULAR ESTIMADA",grupo:"renal",direcao:"ABAIXO",valor:"35",unidade:"mL/min",referencia:"≥ 60",peso:35.0},
+        {nome:"UREIA",grupo:"renal",direcao:"ACIMA",valor:"72",unidade:"mg/dL",referencia:"15 – 43",peso:24.0},
+        {nome:"HEMOGLOBINA",grupo:"hematologico",direcao:"ABAIXO",valor:"10.2",unidade:"g/dL",referencia:"13,5 – 17,5",peso:16.0},
+        {nome:"FERRITINA",grupo:"hematologico",direcao:"ACIMA",valor:"420",unidade:"ng/mL",referencia:"12 – 300",peso:10.0},
+        {nome:"POTASSIO",grupo:"eletrolitico",direcao:"ACIMA",valor:"5.6",unidade:"mmol/L",referencia:"3,5 – 5,1",peso:22.0}
+      ],
+      componentes:[
+        {nome:"score_laboratorial_base",contribuicao:72.0,desc:"6 analitos alterados"},
+        {nome:"estadio_renal",contribuicao:35.0,desc:"TFGe 35 → G3b"},
+        {nome:"padroes_sinergicos",contribuicao:16.0,desc:"DRC + Anemia"},
+        {nome:"contexto_clinico",contribuicao:18.0,desc:"2 condições crônicas"},
+        {nome:"lacuna_coleta",contribuicao:15.0,desc:"5 gaps"},
+        {nome:"tendencia_temporal",contribuicao:30.0,desc:"Piora moderada em renal"},
+        {nome:"faixa_etaria",contribuicao:8.0,desc:"60–79 anos"}
+      ],
+      tendencias:[
+        {grupo:"renal",tend:"PIORA MODERADA",delta:20.5,vel:0.64},
+        {grupo:"hematologico",tend:"PIORA LEVE",delta:8.2,vel:0.26},
+        {grupo:"eletrolitico",tend:"PIORA LEVE",delta:4.1,vel:0.13},
+        {grupo:"metabolico",tend:"ESTÁVEL",delta:0,vel:0},
+        {grupo:"inflamatorio",tend:"ESTÁVEL",delta:0,vel:0}
+      ],
+      gaps:[
+        {label:"Creatinina",tipo:"EXAME VENCIDO PARA PERFIL DE RISCO",condicao:"DRC",just:"Creatinina: 32d sem coleta (intervalo: 30d).",dias:32,intervalo:30},
+        {label:"Ureia",tipo:"EXAME VENCIDO PARA PERFIL DE RISCO",condicao:"DRC",just:"Ureia: 32d sem coleta.",dias:32,intervalo:30},
+        {label:"Hemoglobina",tipo:"EXAME VENCIDO PARA PERFIL DE RISCO",condicao:"Anemia",just:"Hemoglobina: 32d sem coleta (intervalo: 90d).",dias:32,intervalo:90},
+        {label:"Ferritina",tipo:"EXAME AUSENTE PARA CONDIÇÃO CRÔNICA",condicao:"Anemia",just:"Ferritina em série — controle necessário.",dias:null,intervalo:180},
+        {label:"TFGe",tipo:"TFG NÃO ESTIMADA (CREATININA AUSENTE)",condicao:"DRC",just:"TFGe vencida.",dias:32,intervalo:30}
+      ],
+      historico:[
+        {data:"2025-11-18",score:80.1,classif:"PRIORIDADE DE ACOMPANHAMENTO",ctx:"Creatinina 1.8 · TFGe 42 · Hb 10.8",sub:{renal:52,metabolico:10,eletrolitico:14,hematologico:18,inflamatorio:3}}
+      ],
+      evolucao_analitica:[
+        {analito:"Creatinina",grupo:"renal",unidade:"mg/dL",tend:"PIORA",delta:0.3,delta_pct:17,v_primeira:1.8,v_ultima:2.1,n_coletas:2,ref:"0,6–1,2",
+          pontos:[{data:"2025-11-18",valor:1.8,status:"ACIMA"},{data:"2026-02-19",valor:2.1,status:"ACIMA"}]},
+        {analito:"TFGe",grupo:"renal",unidade:"mL/min",tend:"PIORA",delta:-7,delta_pct:-17,v_primeira:42,v_ultima:35,n_coletas:2,ref:"≥ 60",
+          pontos:[{data:"2025-11-18",valor:42,status:"ABAIXO"},{data:"2026-02-19",valor:35,status:"ABAIXO"}]}
+      ]
+    },
+    { id:"A004", nome:"Paciente A004", faixa:"40–59 anos", dt_nasc:"1966-02-18",
+      ipl:87.1, classif:"AVALIAÇÃO CLÍNICA PRIORITÁRIA",
+      analito_critico:"Hemoglobina Glicada", grupo_critico:"metabolico",
+      tendencia_dom:"SEM HISTÓRICO ANTERIOR", dias_coleta:8, n_gaps:3,
+      lacuna_global:"COLETA ADEQUADA", lacuna_analitica:"LACUNA CRÍTICA",
+      medico:"Dra. Demo Carmo", tfg:null, tfg_estadio:null,
+      cronicas:["DM2","Tireoidopatia","DLP"],
+      padroes_detectados:["Síndrome metabólica"],
+      cronicas_detail:[
+        {condicao:"DM2",          analitos:[{nome:"HEMOGLOBINA GLICADA",direcao:"ACIMA",valor:"8.9"},{nome:"GLICOSE MÉDIA ESTIMADA",direcao:"ACIMA",valor:"207"}]},
+        {condicao:"Tireoidopatia",analitos:[{nome:"TSH",direcao:"ACIMA",valor:"8.2"},{nome:"T4 LIVRE",direcao:"ABAIXO",valor:"0.65"}]},
+        {condicao:"DLP",          analitos:[{nome:"TRIGLICÉRIDES",direcao:"ACIMA",valor:"420"},{nome:"FRAÇÃO DO COLESTEROL - VLDL",direcao:"ACIMA",valor:"84"},{nome:"LDL",direcao:"ACIMA",valor:"165"}]}
+      ],
+      analitos_alterados:[
+        {nome:"HEMOGLOBINA GLICADA",grupo:"metabolico",direcao:"ACIMA",valor:"8.9",unidade:"%",referencia:"4,0 – 5,6",peso:24.0},
+        {nome:"GLICOSE MÉDIA ESTIMADA",grupo:"metabolico",direcao:"ACIMA",valor:"207",unidade:"mg/dL",referencia:"< 154",peso:18.0},
+        {nome:"TSH",grupo:"metabolico",direcao:"ACIMA",valor:"8.2",unidade:"mUI/L",referencia:"0,4 – 4,0",peso:20.0},
+        {nome:"T4 LIVRE",grupo:"metabolico",direcao:"ABAIXO",valor:"0.65",unidade:"ng/dL",referencia:"0,8 – 1,8",peso:15.0},
+        {nome:"TRIGLICÉRIDES",grupo:"metabolico",direcao:"ACIMA",valor:"420",unidade:"mg/dL",referencia:"< 150",peso:12.0},
+        {nome:"FRAÇÃO DO COLESTEROL - VLDL",grupo:"metabolico",direcao:"ACIMA",valor:"84",unidade:"mg/dL",referencia:"< 30",peso:10.0},
+        {nome:"LDL",grupo:"metabolico",direcao:"ACIMA",valor:"165",unidade:"mg/dL",referencia:"< 130",peso:8.0},
+        {nome:"CREATINOQUINASE",grupo:"metabolico",direcao:"ACIMA",valor:"380",unidade:"U/L",referencia:"< 190",peso:9.0}
+      ],
+      componentes:[
+        {nome:"score_laboratorial_base",contribuicao:76.0,desc:"8 analitos alterados"},
+        {nome:"contexto_clinico",contribuicao:24.0,desc:"3 condições crônicas"},
+        {nome:"padroes_sinergicos",contribuicao:18.0,desc:"Síndrome metabólica"},
+        {nome:"lacuna_coleta",contribuicao:12.0,desc:"3 gaps"},
+        {nome:"tendencia_temporal",contribuicao:0.0,desc:"Sem histórico anterior"},
+        {nome:"estadio_renal",contribuicao:0.0,desc:"TFGe não disponível"},
+        {nome:"faixa_etaria",contribuicao:5.0,desc:"40–59 anos"}
+      ],
+      tendencias:[
+        {grupo:"metabolico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},
+        {grupo:"renal",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},
+        {grupo:"hematologico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},
+        {grupo:"eletrolitico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},
+        {grupo:"inflamatorio",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null}
+      ],
+      gaps:[
+        {label:"HbA1c",tipo:"EXAME VENCIDO PARA PERFIL DE RISCO",condicao:"DM2",just:"HbA1c: 8d desde coleta (intervalo 90d).",dias:8,intervalo:90},
+        {label:"T4 Livre",tipo:"EXAME VENCIDO PARA PERFIL DE RISCO",condicao:"Tireoidopatia",just:"T4L: 8d desde coleta — acompanhamento a cada 90d.",dias:8,intervalo:90},
+        {label:"Triglicérides",tipo:"EXAME VENCIDO PARA PERFIL DE RISCO",condicao:"DLP",just:"Triglicérides: 8d desde coleta.",dias:8,intervalo:90}
+      ],
+      historico:[], evolucao_analitica:[]
+    },
+    { id:"A005", nome:"Paciente A005", faixa:"60–79 anos", dt_nasc:"1949-09-30",
+      ipl:84.6, classif:"AVALIAÇÃO CLÍNICA PRIORITÁRIA",
+      analito_critico:"Ácido Úrico", grupo_critico:"metabolico",
+      tendencia_dom:"SEM HISTÓRICO ANTERIOR", dias_coleta:62, n_gaps:3,
+      lacuna_global:"ATENÇÃO", lacuna_analitica:"LACUNA CRÍTICA",
+      medico:"Dr. Demo Ramos", tfg:42, tfg_estadio:"G3b",
+      cronicas:["DRC","Gota"],
+      padroes_detectados:[],
+      cronicas_detail:[
+        {condicao:"DRC", analitos:[{nome:"CREATININA",direcao:"ACIMA",valor:"1.7"},{nome:"TAXA DE FILTRAÇÃO GLOMERULAR ESTIMADA",direcao:"ABAIXO",valor:"42"}]},
+        {condicao:"Gota",analitos:[{nome:"ÁCIDO ÚRICO",direcao:"ACIMA",valor:"11.2"}]}
+      ],
+      analitos_alterados:[
+        {nome:"ÁCIDO ÚRICO",grupo:"metabolico",direcao:"ACIMA",valor:"11.2",unidade:"mg/dL",referencia:"2,5 – 6,2",peso:14.0},
+        {nome:"CREATININA",grupo:"renal",direcao:"ACIMA",valor:"1.7",unidade:"mg/dL",referencia:"0,6 – 1,2",peso:30.0},
+        {nome:"TAXA DE FILTRAÇÃO GLOMERULAR ESTIMADA",grupo:"renal",direcao:"ABAIXO",valor:"42",unidade:"mL/min",referencia:"≥ 60",peso:30.0},
+        {nome:"UREIA",grupo:"renal",direcao:"ACIMA",valor:"52",unidade:"mg/dL",referencia:"15 – 43",peso:18.0},
+        {nome:"CÁLCIO SÉRICO",grupo:"eletrolitico",direcao:"ACIMA",valor:"10.8",unidade:"mg/dL",referencia:"8,5 – 10,2",peso:16.0}
+      ],
+      componentes:[
+        {nome:"score_laboratorial_base",contribuicao:62.0,desc:"5 analitos alterados"},
+        {nome:"estadio_renal",contribuicao:30.0,desc:"TFGe 42 → G3b"},
+        {nome:"contexto_clinico",contribuicao:16.0,desc:"2 condições crônicas"},
+        {nome:"lacuna_coleta",contribuicao:14.0,desc:"3 gaps · 62d sem coleta"},
+        {nome:"tendencia_temporal",contribuicao:0.0,desc:"Sem histórico anterior"},
+        {nome:"padroes_sinergicos",contribuicao:0.0,desc:"Nenhum padrão sinérgico"},
+        {nome:"faixa_etaria",contribuicao:8.0,desc:"60–79 anos"}
+      ],
+      tendencias:[{grupo:"renal",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"metabolico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"hematologico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"eletrolitico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"inflamatorio",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null}],
+      gaps:[
+        {label:"Creatinina",tipo:"EXAME VENCIDO PARA PERFIL DE RISCO",condicao:"DRC",just:"Creatinina: 62d sem coleta (intervalo 30d).",dias:62,intervalo:30},
+        {label:"Ureia",tipo:"EXAME VENCIDO PARA PERFIL DE RISCO",condicao:"DRC",just:"Ureia: 62d sem coleta.",dias:62,intervalo:30},
+        {label:"TFGe",tipo:"TFG NÃO ESTIMADA (CREATININA AUSENTE)",condicao:"DRC",just:"TFGe vencida há 62d.",dias:62,intervalo:30}
+      ],
+      historico:[], evolucao_analitica:[]
+    },
+    // ── PRIORIDADE DE ACOMPANHAMENTO ─────────────────────────────────────────
+    { id:"A006", nome:"Paciente A006", faixa:"40–59 anos", dt_nasc:"1971-05-12",
+      ipl:76.4, classif:"PRIORIDADE DE ACOMPANHAMENTO",
+      analito_critico:"Hemoglobina Glicada", grupo_critico:"metabolico",
+      tendencia_dom:"PIORA LEVE", dias_coleta:21, n_gaps:2,
+      lacuna_global:"COLETA ADEQUADA", lacuna_analitica:"ATENÇÃO",
+      medico:"Dra. Demo Lima", tfg:null, tfg_estadio:null,
+      cronicas:["DM2","DLP"], padroes_detectados:["Síndrome metabólica"],
+      cronicas_detail:[{condicao:"DM2",analitos:[{nome:"HEMOGLOBINA GLICADA",direcao:"ACIMA",valor:"8.1"}]},{condicao:"DLP",analitos:[{nome:"TRIGLICÉRIDES",direcao:"ACIMA",valor:"215"}]}],
+      analitos_alterados:[
+        {nome:"HEMOGLOBINA GLICADA",grupo:"metabolico",direcao:"ACIMA",valor:"8.1",unidade:"%",referencia:"4,0 – 5,6",peso:20.0},
+        {nome:"GLICOSE MÉDIA ESTIMADA",grupo:"metabolico",direcao:"ACIMA",valor:"186",unidade:"mg/dL",referencia:"< 154",peso:16.0},
+        {nome:"TRIGLICÉRIDES",grupo:"metabolico",direcao:"ACIMA",valor:"215",unidade:"mg/dL",referencia:"< 150",peso:9.0},
+        {nome:"FRAÇÃO DO COLESTEROL - VLDL",grupo:"metabolico",direcao:"ACIMA",valor:"43",unidade:"mg/dL",referencia:"< 30",peso:7.0},
+        {nome:"GLICEMIA DE JEJUM",grupo:"metabolico",direcao:"ACIMA",valor:"142",unidade:"mg/dL",referencia:"< 100",peso:10.0}
+      ],
+      componentes:[{nome:"score_laboratorial_base",contribuicao:48.0,desc:"5 analitos"},{nome:"contexto_clinico",contribuicao:14.0,desc:"2 crônicas"},{nome:"padroes_sinergicos",contribuicao:10.0,desc:"Sínd. metabólica"},{nome:"lacuna_coleta",contribuicao:8.0,desc:"2 gaps"},{nome:"tendencia_temporal",contribuicao:18.0,desc:"Piora leve"},{nome:"estadio_renal",contribuicao:0,desc:""},{nome:"faixa_etaria",contribuicao:5.0,desc:"40–59 anos"}],
+      tendencias:[{grupo:"metabolico",tend:"PIORA LEVE",delta:8.1,vel:0.39},{grupo:"renal",tend:"ESTÁVEL",delta:0,vel:0},{grupo:"hematologico",tend:"ESTÁVEL",delta:0,vel:0},{grupo:"eletrolitico",tend:"ESTÁVEL",delta:0,vel:0},{grupo:"inflamatorio",tend:"ESTÁVEL",delta:0,vel:0}],
+      gaps:[{label:"HbA1c",tipo:"EXAME VENCIDO PARA PERFIL DE RISCO",condicao:"DM2",just:"HbA1c: 21d (intervalo 90d).",dias:21,intervalo:90},{label:"Triglicérides",tipo:"EXAME VENCIDO PARA PERFIL DE RISCO",condicao:"DLP",just:"Triglicérides: 21d (intervalo 90d).",dias:21,intervalo:90}],
+      historico:[{data:"2025-12-20",score:62.3,classif:"PRIORIDADE DE ACOMPANHAMENTO",ctx:"HbA1c 7.8 · TG 188",sub:{renal:0,metabolico:40,eletrolitico:0,hematologico:0,inflamatorio:0}}],
+      evolucao_analitica:[{analito:"HbA1c",grupo:"metabolico",unidade:"%",tend:"PIORA",delta:0.3,delta_pct:4,v_primeira:7.8,v_ultima:8.1,n_coletas:2,ref:"4,0–5,6",pontos:[{data:"2025-12-20",valor:7.8,status:"ACIMA"},{data:"2026-02-14",valor:8.1,status:"ACIMA"}]}]
+    },
+    { id:"A007", nome:"Paciente A007", faixa:"60–79 anos", dt_nasc:"1963-08-07",
+      ipl:73.2, classif:"PRIORIDADE DE ACOMPANHAMENTO",
+      analito_critico:"Hemoglobina Glicada", grupo_critico:"metabolico",
+      tendencia_dom:"SEM HISTÓRICO ANTERIOR", dias_coleta:10, n_gaps:1,
+      lacuna_global:"COLETA ADEQUADA", lacuna_analitica:"ATENÇÃO",
+      medico:"Dr. Demo Alves", tfg:null, tfg_estadio:null,
+      cronicas:["DM2"], padroes_detectados:[],
+      cronicas_detail:[{condicao:"DM2",analitos:[{nome:"HEMOGLOBINA GLICADA",direcao:"ACIMA",valor:"7.8"}]}],
+      analitos_alterados:[
+        {nome:"HEMOGLOBINA GLICADA",grupo:"metabolico",direcao:"ACIMA",valor:"7.8",unidade:"%",referencia:"4,0 – 5,6",peso:18.0},
+        {nome:"GLICEMIA DE JEJUM",grupo:"metabolico",direcao:"ACIMA",valor:"128",unidade:"mg/dL",referencia:"< 100",peso:10.0},
+        {nome:"CREATINOQUINASE",grupo:"metabolico",direcao:"ACIMA",valor:"290",unidade:"U/L",referencia:"< 308",peso:5.0}
+      ],
+      componentes:[{nome:"score_laboratorial_base",contribuicao:38.0,desc:"3 analitos"},{nome:"contexto_clinico",contribuicao:10.0,desc:"1 crônica"},{nome:"padroes_sinergicos",contribuicao:0,desc:""},{nome:"lacuna_coleta",contribuicao:6.0,desc:"1 gap"},{nome:"tendencia_temporal",contribuicao:0,desc:"Sem histórico"},{nome:"estadio_renal",contribuicao:0,desc:""},{nome:"faixa_etaria",contribuicao:8.0,desc:"60–79 anos"}],
+      tendencias:[{grupo:"metabolico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"renal",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"hematologico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"eletrolitico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"inflamatorio",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null}],
+      gaps:[{label:"Glicose",tipo:"EXAME VENCIDO PARA PERFIL DE RISCO",condicao:"DM2",just:"Glicose: 10d (intervalo 30d).",dias:10,intervalo:30}],
+      historico:[], evolucao_analitica:[]
+    },
+    { id:"A008", nome:"Paciente A008", faixa:"60–79 anos", dt_nasc:"1954-03-25",
+      ipl:71.0, classif:"PRIORIDADE DE ACOMPANHAMENTO",
+      analito_critico:"Hemoglobina", grupo_critico:"hematologico",
+      tendencia_dom:"PIORA LEVE", dias_coleta:55, n_gaps:2,
+      lacuna_global:"ATENÇÃO", lacuna_analitica:"ATENÇÃO",
+      medico:"Dra. Demo Faria", tfg:55, tfg_estadio:"G3a",
+      cronicas:["Anemia","DRC"], padroes_detectados:["DRC + Anemia"],
+      cronicas_detail:[{condicao:"Anemia",analitos:[{nome:"HEMOGLOBINA",direcao:"ABAIXO",valor:"10.8"},{nome:"FERRITINA",direcao:"ABAIXO",valor:"11"}]},{condicao:"DRC",analitos:[{nome:"CREATININA",direcao:"ACIMA",valor:"1.4"},{nome:"TAXA DE FILTRAÇÃO GLOMERULAR ESTIMADA",direcao:"ABAIXO",valor:"55"}]}],
+      analitos_alterados:[
+        {nome:"HEMOGLOBINA",grupo:"hematologico",direcao:"ABAIXO",valor:"10.8",unidade:"g/dL",referencia:"12,0 – 16,0",peso:16.0},
+        {nome:"FERRITINA",grupo:"hematologico",direcao:"ABAIXO",valor:"11",unidade:"ng/mL",referencia:"12 – 150",peso:12.0},
+        {nome:"VCM",grupo:"hematologico",direcao:"ABAIXO",valor:"74",unidade:"fL",referencia:"80 – 100",peso:8.0},
+        {nome:"CREATININA",grupo:"renal",direcao:"ACIMA",valor:"1.4",unidade:"mg/dL",referencia:"0,5 – 1,1",peso:20.0},
+        {nome:"TAXA DE FILTRAÇÃO GLOMERULAR ESTIMADA",grupo:"renal",direcao:"ABAIXO",valor:"55",unidade:"mL/min",referencia:"≥ 60",peso:20.0}
+      ],
+      componentes:[{nome:"score_laboratorial_base",contribuicao:52.0,desc:"5 analitos"},{nome:"estadio_renal",contribuicao:20.0,desc:"G3a"},{nome:"padroes_sinergicos",contribuicao:12.0,desc:"DRC + Anemia"},{nome:"contexto_clinico",contribuicao:14.0,desc:"2 crônicas"},{nome:"lacuna_coleta",contribuicao:10.0,desc:"2 gaps"},{nome:"tendencia_temporal",contribuicao:15.0,desc:"Piora leve"},{nome:"faixa_etaria",contribuicao:8.0,desc:"60–79 anos"}],
+      tendencias:[{grupo:"hematologico",tend:"PIORA LEVE",delta:6.2,vel:0.11},{grupo:"renal",tend:"PIORA LEVE",delta:8.0,vel:0.15},{grupo:"metabolico",tend:"ESTÁVEL",delta:0,vel:0},{grupo:"eletrolitico",tend:"ESTÁVEL",delta:0,vel:0},{grupo:"inflamatorio",tend:"ESTÁVEL",delta:0,vel:0}],
+      gaps:[{label:"Hemoglobina",tipo:"EXAME VENCIDO PARA PERFIL DE RISCO",condicao:"Anemia",just:"Hemoglobina: 55d (intervalo 90d).",dias:55,intervalo:90},{label:"Creatinina",tipo:"EXAME VENCIDO PARA PERFIL DE RISCO",condicao:"DRC",just:"Creatinina: 55d (intervalo 30d).",dias:55,intervalo:30}],
+      historico:[{data:"2025-10-15",score:62.0,classif:"PRIORIDADE DE ACOMPANHAMENTO",ctx:"Hb 11.2 · Creat 1.3 · TFGe 60",sub:{renal:30,metabolico:5,eletrolitico:2,hematologico:22,inflamatorio:2}}],
+      evolucao_analitica:[{analito:"Creatinina",grupo:"renal",unidade:"mg/dL",tend:"PIORA",delta:0.1,delta_pct:8,v_primeira:1.3,v_ultima:1.4,n_coletas:2,ref:"0,5–1,1",pontos:[{data:"2025-10-15",valor:1.3,status:"ACIMA"},{data:"2026-01-09",valor:1.4,status:"ACIMA"}]}]
+    },
+    { id:"A009", nome:"Paciente A009", faixa:"40–59 anos", dt_nasc:"1968-12-14",
+      ipl:66.8, classif:"PRIORIDADE DE ACOMPANHAMENTO",
+      analito_critico:"Ácido Úrico", grupo_critico:"metabolico",
+      tendencia_dom:"SEM HISTÓRICO ANTERIOR", dias_coleta:5, n_gaps:1,
+      lacuna_global:"COLETA ADEQUADA", lacuna_analitica:"ATENÇÃO",
+      medico:"Dr. Demo Pinto", tfg:null, tfg_estadio:null,
+      cronicas:["Gota","DLP"], padroes_detectados:[],
+      cronicas_detail:[{condicao:"Gota",analitos:[{nome:"ÁCIDO ÚRICO",direcao:"ACIMA",valor:"9.8"}]},{condicao:"DLP",analitos:[{nome:"TRIGLICÉRIDES",direcao:"ACIMA",valor:"195"}]}],
+      analitos_alterados:[
+        {nome:"ÁCIDO ÚRICO",grupo:"metabolico",direcao:"ACIMA",valor:"9.8",unidade:"mg/dL",referencia:"3,5 – 7,2",peso:14.0},
+        {nome:"TRIGLICÉRIDES",grupo:"metabolico",direcao:"ACIMA",valor:"195",unidade:"mg/dL",referencia:"< 150",peso:8.0},
+        {nome:"FRAÇÃO DO COLESTEROL - VLDL",grupo:"metabolico",direcao:"ACIMA",valor:"39",unidade:"mg/dL",referencia:"< 30",peso:6.0}
+      ],
+      componentes:[{nome:"score_laboratorial_base",contribuicao:34.0,desc:"3 analitos"},{nome:"contexto_clinico",contribuicao:12.0,desc:"2 crônicas"},{nome:"padroes_sinergicos",contribuicao:0,desc:""},{nome:"lacuna_coleta",contribuicao:4.0,desc:"1 gap"},{nome:"tendencia_temporal",contribuicao:0,desc:""},{nome:"estadio_renal",contribuicao:0,desc:""},{nome:"faixa_etaria",contribuicao:5.0,desc:"40–59 anos"}],
+      tendencias:[{grupo:"metabolico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"renal",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"hematologico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"eletrolitico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"inflamatorio",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null}],
+      gaps:[{label:"Ácido Úrico",tipo:"EXAME VENCIDO PARA PERFIL DE RISCO",condicao:"Gota",just:"Ácido Úrico: 5d (intervalo 90d).",dias:5,intervalo:90}],
+      historico:[], evolucao_analitica:[]
+    },
+    { id:"A010", nome:"Paciente A010", faixa:"60–79 anos", dt_nasc:"1961-06-28",
+      ipl:63.5, classif:"PRIORIDADE DE ACOMPANHAMENTO",
+      analito_critico:"TSH", grupo_critico:"metabolico",
+      tendencia_dom:"SEM HISTÓRICO ANTERIOR", dias_coleta:14, n_gaps:2,
+      lacuna_global:"COLETA ADEQUADA", lacuna_analitica:"ATENÇÃO",
+      medico:"Dra. Demo Melo", tfg:null, tfg_estadio:null,
+      cronicas:["Tireoidopatia"], padroes_detectados:[],
+      cronicas_detail:[{condicao:"Tireoidopatia",analitos:[{nome:"TSH",direcao:"ACIMA",valor:"6.8"},{nome:"T4 LIVRE",direcao:"ABAIXO",valor:"0.72"}]}],
+      analitos_alterados:[
+        {nome:"TSH",grupo:"metabolico",direcao:"ACIMA",valor:"6.8",unidade:"mUI/L",referencia:"0,4 – 4,0",peso:18.0},
+        {nome:"T4 LIVRE",grupo:"metabolico",direcao:"ABAIXO",valor:"0.72",unidade:"ng/dL",referencia:"0,8 – 1,8",peso:14.0},
+        {nome:"COLESTEROL TOTAL",grupo:"metabolico",direcao:"ACIMA",valor:"210",unidade:"mg/dL",referencia:"< 190",peso:6.0}
+      ],
+      componentes:[{nome:"score_laboratorial_base",contribuicao:32.0,desc:"3 analitos"},{nome:"contexto_clinico",contribuicao:10.0,desc:"1 crônica"},{nome:"padroes_sinergicos",contribuicao:0,desc:""},{nome:"lacuna_coleta",contribuicao:6.0,desc:"2 gaps"},{nome:"tendencia_temporal",contribuicao:0,desc:""},{nome:"estadio_renal",contribuicao:0,desc:""},{nome:"faixa_etaria",contribuicao:8.0,desc:"60–79 anos"}],
+      tendencias:[{grupo:"metabolico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"renal",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"hematologico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"eletrolitico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"inflamatorio",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null}],
+      gaps:[{label:"TSH",tipo:"EXAME VENCIDO PARA PERFIL DE RISCO",condicao:"Tireoidopatia",just:"TSH: 14d (intervalo 90d).",dias:14,intervalo:90},{label:"T4 Livre",tipo:"EXAME VENCIDO PARA PERFIL DE RISCO",condicao:"Tireoidopatia",just:"T4L: 14d (intervalo 90d).",dias:14,intervalo:90}],
+      historico:[], evolucao_analitica:[]
+    },
+    // ── REVISÃO PROGRAMADA ────────────────────────────────────────────────────
+    { id:"A011", nome:"Paciente A011", faixa:"40–59 anos", dt_nasc:"1975-10-02",
+      ipl:52.3, classif:"REVISÃO PROGRAMADA",
+      analito_critico:"Triglicérides", grupo_critico:"metabolico",
+      tendencia_dom:"PIORA LEVE", dias_coleta:25, n_gaps:0,
+      lacuna_global:"COLETA ADEQUADA", lacuna_analitica:"COLETA ADEQUADA",
+      medico:"Dra. Demo Castro", tfg:null, tfg_estadio:null,
+      cronicas:["DLP"], padroes_detectados:[],
+      cronicas_detail:[{condicao:"DLP",analitos:[{nome:"TRIGLICÉRIDES",direcao:"ACIMA",valor:"168"},{nome:"LDL",direcao:"ACIMA",valor:"145"}]}],
+      analitos_alterados:[{nome:"TRIGLICÉRIDES",grupo:"metabolico",direcao:"ACIMA",valor:"168",unidade:"mg/dL",referencia:"< 150",peso:7.0},{nome:"LDL",grupo:"metabolico",direcao:"ACIMA",valor:"145",unidade:"mg/dL",referencia:"< 130",peso:8.0},{nome:"FRAÇÃO DO COLESTEROL - VLDL",grupo:"metabolico",direcao:"ACIMA",valor:"34",unidade:"mg/dL",referencia:"< 30",peso:5.0}],
+      componentes:[{nome:"score_laboratorial_base",contribuicao:22.0,desc:"3 analitos"},{nome:"contexto_clinico",contribuicao:8.0,desc:"1 crônica"},{nome:"padroes_sinergicos",contribuicao:0,desc:""},{nome:"lacuna_coleta",contribuicao:0,desc:""},{nome:"tendencia_temporal",contribuicao:12.0,desc:"Piora leve"},{nome:"estadio_renal",contribuicao:0,desc:""},{nome:"faixa_etaria",contribuicao:5.0,desc:"40–59 anos"}],
+      tendencias:[{grupo:"metabolico",tend:"PIORA LEVE",delta:5.2,vel:0.21},{grupo:"renal",tend:"ESTÁVEL",delta:0,vel:0},{grupo:"hematologico",tend:"ESTÁVEL",delta:0,vel:0},{grupo:"eletrolitico",tend:"ESTÁVEL",delta:0,vel:0},{grupo:"inflamatorio",tend:"ESTÁVEL",delta:0,vel:0}],
+      gaps:[], historico:[], evolucao_analitica:[]
+    },
+    { id:"A012", nome:"Paciente A012", faixa:"40–59 anos", dt_nasc:"1966-04-19",
+      ipl:47.8, classif:"REVISÃO PROGRAMADA",
+      analito_critico:"Hemoglobina", grupo_critico:"hematologico",
+      tendencia_dom:"SEM HISTÓRICO ANTERIOR", dias_coleta:12, n_gaps:1,
+      lacuna_global:"COLETA ADEQUADA", lacuna_analitica:"ATENÇÃO",
+      medico:"Dr. Demo Borges", tfg:null, tfg_estadio:null,
+      cronicas:["Anemia"], padroes_detectados:[],
+      cronicas_detail:[{condicao:"Anemia",analitos:[{nome:"HEMOGLOBINA",direcao:"ABAIXO",valor:"11.2"},{nome:"VCM",direcao:"ABAIXO",valor:"76"}]}],
+      analitos_alterados:[{nome:"HEMOGLOBINA",grupo:"hematologico",direcao:"ABAIXO",valor:"11.2",unidade:"g/dL",referencia:"12,0 – 16,0",peso:14.0},{nome:"VCM",grupo:"hematologico",direcao:"ABAIXO",valor:"76",unidade:"fL",referencia:"80 – 100",peso:8.0},{nome:"RDW",grupo:"hematologico",direcao:"ACIMA",valor:"15.8",unidade:"%",referencia:"11 – 15",peso:6.0}],
+      componentes:[{nome:"score_laboratorial_base",contribuicao:22.0,desc:"3 analitos"},{nome:"contexto_clinico",contribuicao:8.0,desc:"1 crônica"},{nome:"padroes_sinergicos",contribuicao:0,desc:""},{nome:"lacuna_coleta",contribuicao:4.0,desc:"1 gap"},{nome:"tendencia_temporal",contribuicao:0,desc:""},{nome:"estadio_renal",contribuicao:0,desc:""},{nome:"faixa_etaria",contribuicao:5.0,desc:"40–59 anos"}],
+      tendencias:[{grupo:"hematologico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"metabolico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"renal",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"eletrolitico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"inflamatorio",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null}],
+      gaps:[{label:"Ferritina",tipo:"EXAME AUSENTE PARA CONDIÇÃO CRÔNICA",condicao:"Anemia",just:"Ferritina nunca coletada.",dias:null,intervalo:180}],
+      historico:[], evolucao_analitica:[]
+    },
+    { id:"A013", nome:"Paciente A013", faixa:"60–79 anos", dt_nasc:"1957-01-08",
+      ipl:45.1, classif:"REVISÃO PROGRAMADA",
+      analito_critico:"Hemoglobina Glicada", grupo_critico:"metabolico",
+      tendencia_dom:"MELHORA", dias_coleta:7, n_gaps:0,
+      lacuna_global:"COLETA ADEQUADA", lacuna_analitica:"COLETA ADEQUADA",
+      medico:"Dra. Demo Vaz", tfg:null, tfg_estadio:null,
+      cronicas:["DM2"], padroes_detectados:[],
+      cronicas_detail:[{condicao:"DM2",analitos:[{nome:"HEMOGLOBINA GLICADA",direcao:"ACIMA",valor:"7.1"}]}],
+      analitos_alterados:[{nome:"HEMOGLOBINA GLICADA",grupo:"metabolico",direcao:"ACIMA",valor:"7.1",unidade:"%",referencia:"4,0 – 5,6",peso:12.0},{nome:"GLICEMIA DE JEJUM",grupo:"metabolico",direcao:"ACIMA",valor:"118",unidade:"mg/dL",referencia:"< 100",peso:8.0}],
+      componentes:[{nome:"score_laboratorial_base",contribuicao:18.0,desc:"2 analitos"},{nome:"contexto_clinico",contribuicao:8.0,desc:"1 crônica"},{nome:"padroes_sinergicos",contribuicao:0,desc:""},{nome:"lacuna_coleta",contribuicao:0,desc:""},{nome:"tendencia_temporal",contribuicao:8.0,desc:"Melhora"},{nome:"estadio_renal",contribuicao:0,desc:""},{nome:"faixa_etaria",contribuicao:8.0,desc:"60–79 anos"}],
+      tendencias:[{grupo:"metabolico",tend:"MELHORA",delta:-0.9,vel:-0.03},{grupo:"renal",tend:"ESTÁVEL",delta:0,vel:0},{grupo:"hematologico",tend:"ESTÁVEL",delta:0,vel:0},{grupo:"eletrolitico",tend:"ESTÁVEL",delta:0,vel:0},{grupo:"inflamatorio",tend:"ESTÁVEL",delta:0,vel:0}],
+      gaps:[], historico:[{data:"2025-08-01",score:52.4,classif:"REVISÃO PROGRAMADA",ctx:"HbA1c 8.0",sub:{renal:0,metabolico:28,eletrolitico:0,hematologico:0,inflamatorio:0}},{data:"2026-01-07",score:40.2,classif:"REVISÃO PROGRAMADA",ctx:"HbA1c 7.1",sub:{renal:0,metabolico:20,eletrolitico:0,hematologico:0,inflamatorio:0}}],
+      evolucao_analitica:[{analito:"HbA1c",grupo:"metabolico",unidade:"%",tend:"MELHORA",delta:-0.9,delta_pct:-11,v_primeira:8.0,v_ultima:7.1,n_coletas:2,ref:"4,0–5,6",pontos:[{data:"2025-08-01",valor:8.0,status:"ACIMA"},{data:"2026-01-07",valor:7.1,status:"ACIMA"}]}]
+    },
+    { id:"A014", nome:"Paciente A014", faixa:"40–59 anos", dt_nasc:"1981-09-22",
+      ipl:41.6, classif:"REVISÃO PROGRAMADA",
+      analito_critico:"Triglicérides", grupo_critico:"metabolico",
+      tendencia_dom:"SEM HISTÓRICO ANTERIOR", dias_coleta:30, n_gaps:0,
+      lacuna_global:"COLETA ADEQUADA", lacuna_analitica:"COLETA ADEQUADA",
+      medico:"Dr. Demo Teles", tfg:null, tfg_estadio:null,
+      cronicas:[], padroes_detectados:[],
+      cronicas_detail:[],
+      analitos_alterados:[{nome:"TRIGLICÉRIDES",grupo:"metabolico",direcao:"ACIMA",valor:"172",unidade:"mg/dL",referencia:"< 150",peso:7.0},{nome:"GGT",grupo:"inflamatorio",direcao:"ACIMA",valor:"58",unidade:"U/L",referencia:"< 36",peso:8.0}],
+      componentes:[{nome:"score_laboratorial_base",contribuicao:16.0,desc:"2 analitos"},{nome:"contexto_clinico",contribuicao:0,desc:""},{nome:"padroes_sinergicos",contribuicao:0,desc:""},{nome:"lacuna_coleta",contribuicao:0,desc:""},{nome:"tendencia_temporal",contribuicao:0,desc:""},{nome:"estadio_renal",contribuicao:0,desc:""},{nome:"faixa_etaria",contribuicao:5.0,desc:"40–59 anos"}],
+      tendencias:[{grupo:"metabolico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"inflamatorio",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"renal",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"hematologico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"eletrolitico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null}],
+      gaps:[], historico:[], evolucao_analitica:[]
+    },
+    { id:"A015", nome:"Paciente A015", faixa:"60–79 anos", dt_nasc:"1952-07-11",
+      ipl:38.9, classif:"REVISÃO PROGRAMADA",
+      analito_critico:"Ácido Úrico", grupo_critico:"metabolico",
+      tendencia_dom:"SEM HISTÓRICO ANTERIOR", dias_coleta:40, n_gaps:1,
+      lacuna_global:"ATENÇÃO", lacuna_analitica:"ATENÇÃO",
+      medico:"Dra. Demo Freitas", tfg:null, tfg_estadio:null,
+      cronicas:[], padroes_detectados:[],
+      cronicas_detail:[],
+      analitos_alterados:[{nome:"ÁCIDO ÚRICO",grupo:"metabolico",direcao:"ACIMA",valor:"7.8",unidade:"mg/dL",referencia:"3,5 – 7,2",peso:8.0},{nome:"CREATININA",grupo:"renal",direcao:"ACIMA",valor:"1.3",unidade:"mg/dL",referencia:"0,6 – 1,2",peso:12.0},{nome:"UREIA",grupo:"renal",direcao:"ACIMA",valor:"48",unidade:"mg/dL",referencia:"15 – 43",peso:8.0}],
+      componentes:[{nome:"score_laboratorial_base",contribuicao:24.0,desc:"3 analitos"},{nome:"contexto_clinico",contribuicao:0,desc:""},{nome:"padroes_sinergicos",contribuicao:0,desc:""},{nome:"lacuna_coleta",contribuicao:4.0,desc:"1 gap"},{nome:"tendencia_temporal",contribuicao:0,desc:""},{nome:"estadio_renal",contribuicao:0,desc:""},{nome:"faixa_etaria",contribuicao:8.0,desc:"60–79 anos"}],
+      tendencias:[{grupo:"renal",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"metabolico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"hematologico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"eletrolitico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"inflamatorio",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null}],
+      gaps:[{label:"Creatinina",tipo:"EXAME VENCIDO PARA PERFIL DE RISCO",condicao:null,just:"Creatinina: 40d sem coleta (intervalo 30d) — rastreio de função renal.",dias:40,intervalo:30}],
+      historico:[], evolucao_analitica:[]
+    },
+    // ── SEGUIMENTO HABITUAL ────────────────────────────────────────────────────
+    { id:"A016", nome:"Paciente A016", faixa:"18–39 anos", dt_nasc:"1990-02-14",
+      ipl:22.5, classif:"SEGUIMENTO HABITUAL",
+      analito_critico:"Triglicérides", grupo_critico:"metabolico",
+      tendencia_dom:"SEM HISTÓRICO ANTERIOR", dias_coleta:15, n_gaps:0,
+      lacuna_global:"COLETA ADEQUADA", lacuna_analitica:"COLETA ADEQUADA",
+      medico:"Dr. Demo Cruz", tfg:null, tfg_estadio:null,
+      cronicas:[], padroes_detectados:[],
+      cronicas_detail:[],
+      analitos_alterados:[{nome:"TRIGLICÉRIDES",grupo:"metabolico",direcao:"ACIMA",valor:"158",unidade:"mg/dL",referencia:"< 150",peso:5.0}],
+      componentes:[{nome:"score_laboratorial_base",contribuicao:8.0,desc:"1 analito"},{nome:"contexto_clinico",contribuicao:0,desc:""},{nome:"padroes_sinergicos",contribuicao:0,desc:""},{nome:"lacuna_coleta",contribuicao:0,desc:""},{nome:"tendencia_temporal",contribuicao:0,desc:""},{nome:"estadio_renal",contribuicao:0,desc:""},{nome:"faixa_etaria",contribuicao:0.0,desc:"18–39 anos"}],
+      tendencias:[{grupo:"metabolico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"renal",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"hematologico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"eletrolitico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"inflamatorio",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null}],
+      gaps:[], historico:[], evolucao_analitica:[]
+    },
+    { id:"A017", nome:"Paciente A017", faixa:"40–59 anos", dt_nasc:"1978-11-30",
+      ipl:18.3, classif:"SEGUIMENTO HABITUAL",
+      analito_critico:"GGT", grupo_critico:"inflamatorio",
+      tendencia_dom:"SEM HISTÓRICO ANTERIOR", dias_coleta:8, n_gaps:0,
+      lacuna_global:"COLETA ADEQUADA", lacuna_analitica:"COLETA ADEQUADA",
+      medico:"Dra. Demo Couto", tfg:null, tfg_estadio:null,
+      cronicas:[], padroes_detectados:[],
+      cronicas_detail:[],
+      analitos_alterados:[{nome:"GGT",grupo:"inflamatorio",direcao:"ACIMA",valor:"42",unidade:"U/L",referencia:"< 36",peso:6.0}],
+      componentes:[{nome:"score_laboratorial_base",contribuicao:6.0,desc:"1 analito"},{nome:"contexto_clinico",contribuicao:0,desc:""},{nome:"padroes_sinergicos",contribuicao:0,desc:""},{nome:"lacuna_coleta",contribuicao:0,desc:""},{nome:"tendencia_temporal",contribuicao:0,desc:""},{nome:"estadio_renal",contribuicao:0,desc:""},{nome:"faixa_etaria",contribuicao:5.0,desc:"40–59 anos"}],
+      tendencias:[{grupo:"metabolico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"renal",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"hematologico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"eletrolitico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"inflamatorio",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null}],
+      gaps:[], historico:[], evolucao_analitica:[]
+    },
+    { id:"A018", nome:"Paciente A018", faixa:"< 18 anos", dt_nasc:"2010-06-05",
+      ipl:12.1, classif:"SEGUIMENTO HABITUAL",
+      analito_critico:"VCM", grupo_critico:"hematologico",
+      tendencia_dom:"SEM HISTÓRICO ANTERIOR", dias_coleta:3, n_gaps:0,
+      lacuna_global:"COLETA ADEQUADA", lacuna_analitica:"COLETA ADEQUADA",
+      medico:"Dr. Demo Gama", tfg:null, tfg_estadio:null,
+      cronicas:[], padroes_detectados:[],
+      cronicas_detail:[],
+      analitos_alterados:[{nome:"VCM",grupo:"hematologico",direcao:"ABAIXO",valor:"78",unidade:"fL",referencia:"80 – 100",peso:5.0}],
+      componentes:[{nome:"score_laboratorial_base",contribuicao:5.0,desc:"1 analito"},{nome:"contexto_clinico",contribuicao:0,desc:""},{nome:"padroes_sinergicos",contribuicao:0,desc:""},{nome:"lacuna_coleta",contribuicao:0,desc:""},{nome:"tendencia_temporal",contribuicao:0,desc:""},{nome:"estadio_renal",contribuicao:0,desc:""},{nome:"faixa_etaria",contribuicao:0,desc:"< 18 anos"}],
+      tendencias:[{grupo:"metabolico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"renal",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"hematologico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"eletrolitico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"inflamatorio",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null}],
+      gaps:[], historico:[], evolucao_analitica:[]
+    },
+    { id:"A019", nome:"Paciente A019", faixa:"40–59 anos", dt_nasc:"1972-03-17",
+      ipl:9.8, classif:"SEGUIMENTO HABITUAL",
+      analito_critico:"Densidade", grupo_critico:"metabolico",
+      tendencia_dom:"SEM HISTÓRICO ANTERIOR", dias_coleta:20, n_gaps:0,
+      lacuna_global:"COLETA ADEQUADA", lacuna_analitica:"COLETA ADEQUADA",
+      medico:"Dra. Demo Leal", tfg:null, tfg_estadio:null,
+      cronicas:[], padroes_detectados:[],
+      cronicas_detail:[],
+      analitos_alterados:[{nome:"DENSIDADE",grupo:"metabolico",direcao:"ACIMA",valor:"1.028",unidade:"",referencia:"1.005 – 1.025",peso:4.0}],
+      componentes:[{nome:"score_laboratorial_base",contribuicao:4.0,desc:"1 analito"},{nome:"contexto_clinico",contribuicao:0,desc:""},{nome:"padroes_sinergicos",contribuicao:0,desc:""},{nome:"lacuna_coleta",contribuicao:0,desc:""},{nome:"tendencia_temporal",contribuicao:0,desc:""},{nome:"estadio_renal",contribuicao:0,desc:""},{nome:"faixa_etaria",contribuicao:5.0,desc:"40–59 anos"}],
+      tendencias:[{grupo:"metabolico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"renal",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"hematologico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"eletrolitico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"inflamatorio",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null}],
+      gaps:[], historico:[], evolucao_analitica:[]
+    },
+    { id:"A020", nome:"Paciente A020", faixa:"< 18 anos", dt_nasc:"2015-08-22",
+      ipl:5.4, classif:"SEGUIMENTO HABITUAL",
+      analito_critico:"—", grupo_critico:"metabolico",
+      tendencia_dom:"SEM HISTÓRICO ANTERIOR", dias_coleta:2, n_gaps:0,
+      lacuna_global:"COLETA ADEQUADA", lacuna_analitica:"COLETA ADEQUADA",
+      medico:"Dr. Demo Assis", tfg:null, tfg_estadio:null,
+      cronicas:[], padroes_detectados:[],
+      cronicas_detail:[],
+      analitos_alterados:[],
+      componentes:[{nome:"score_laboratorial_base",contribuicao:0,desc:"Nenhum analito alterado"},{nome:"contexto_clinico",contribuicao:0,desc:""},{nome:"padroes_sinergicos",contribuicao:0,desc:""},{nome:"lacuna_coleta",contribuicao:0,desc:""},{nome:"tendencia_temporal",contribuicao:0,desc:""},{nome:"estadio_renal",contribuicao:0,desc:""},{nome:"faixa_etaria",contribuicao:0,desc:"< 18 anos"}],
+      tendencias:[{grupo:"metabolico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"renal",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"hematologico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"eletrolitico",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null},{grupo:"inflamatorio",tend:"SEM HISTÓRICO ANTERIOR",delta:0,vel:null}],
+      gaps:[], historico:[], evolucao_analitica:[]
+    }
+  ],
+  vigilancia:[
+    {label:"Glicose Média Estimada (GME)",  group:"metabolico",  prev:68, alt:14, n:20, padrao:"CRÍTICO",        min_n:5},
+    {label:"Hemoglobina Glicada (HbA1c)",   group:"metabolico",  prev:65, alt:13, n:20, padrao:"CRÍTICO",        min_n:5},
+    {label:"Triglicérides",                 group:"metabolico",  prev:55, alt:11, n:20, padrao:"CRÍTICO",        min_n:5},
+    {label:"TFGe",                          group:"renal",       prev:40, alt:8,  n:20, padrao:"PREVALENTE",     min_n:5},
+    {label:"Hemoglobina",                   group:"hematologico",prev:30, alt:6,  n:20, padrao:"PREVALENTE",     min_n:5},
+    {label:"Ácido Úrico",                   group:"metabolico",  prev:25, alt:5,  n:20, padrao:"PREVALENTE",     min_n:5},
+    {label:"Creatinina",                    group:"renal",       prev:25, alt:5,  n:20, padrao:"PREVALENTE",     min_n:5},
+    {label:"Ferritina",                     group:"hematologico",prev:20, alt:4,  n:20, padrao:"PREVALENTE",     min_n:5},
+    {label:"TSH",                           group:"metabolico",  prev:15, alt:3,  n:20, padrao:"ATENÇÃO DIFUSA", min_n:5},
+    {label:"VCM",                           group:"hematologico",prev:15, alt:3,  n:20, padrao:"ATENÇÃO DIFUSA", min_n:5},
+    {label:"GGT",                           group:"inflamatorio",prev:10, alt:2,  n:20, padrao:"NEGLIGENCIÁVEL", min_n:5},
+    {label:"Creatinoquinase (CPK)",         group:"metabolico",  prev:10, alt:2,  n:20, padrao:"NEGLIGENCIÁVEL", min_n:5}
+  ]
+};
+
+// ── Inicialização direta (sem auth) ───────────────────────────────────────────
+(function(){
+  document.getElementById('ubs-id').textContent   = 'USF Demonstração';
+  document.getElementById('sf-user').textContent  = 'Demo';
+  document.getElementById('ref-date').textContent = new Date().toLocaleDateString('pt-BR');
+  renderPainel(); renderFila(); renderVigilancia(); renderGaps();
+  // Atualiza badge da triagem
+  const alto = T.pacientes.filter(p=>["AVALIAÇÃO CLÍNICA PRIORITÁRIA","PRIORIDADE DE ACOMPANHAMENTO"].includes(p.classif)).length;
+  const fb = document.getElementById('fila-badge');
+  if(fb) fb.textContent = alto;
+})();
+
+// Stubs para evitar erros de referência
+function trocarUSF(){}
+function _carregarTerritorio(){}
+function _iniciarDashboard(){}
+
+// (stubs já declarados acima — bloco de auth removido no modo demo)
+</script>
+
+<!-- ── Drawer de analito ─────────────────────────────────────────────── -->
+<div id="ad-overlay" onclick="_adClose()"></div>
+<div id="ad-drawer">
+  <button class="ad-close" onclick="_adClose()">✕</button>
+  <div id="ad-drawer-content"></div>
+</div>
+
+<script>
+// ── Dicionário fisiopatológico ────────────────────────────────────────────────
+const _ADINFO = {
+  "HEMOGLOBINA GLICADA":{
+    oque:"Reflete a média da glicemia dos últimos 2–3 meses, proporcional à fração de hemoglobina ligada à glicose.",
+    ref:"< 5,7 % normal · 5,7–6,4 % pré-diabetes · ≥ 6,5 % diagnóstico de DM2",
+    acima:"Indica hiperglicemia crônica. Cada 1 % acima de 7 % equivale a ~28 mg/dL a mais na glicemia média e maior risco de complicações microvasculares (retinopatia, nefropatia, neuropatia).",
+    abaixo:"Pode indicar anemia hemolítica, hemoglobinopatia ou controle glicêmico excelente.",
+    condicoes:["DM2","Pré-diabetes","Síndrome metabólica"]
+  },
+  "GLICOSE MÉDIA ESTIMADA":{
+    oque:"Valor calculado a partir da HbA1c — representa a glicemia média estimada nos últimos 2–3 meses.",
+    ref:"< 154 mg/dL (HbA1c < 7 %)",
+    acima:"Derivado diretamente da HbA1c elevada. Indica hiperglicemia crônica e risco aumentado de complicações diabéticas.",
+    abaixo:"Incomum isoladamente; acompanha HbA1c baixa.",
+    condicoes:["DM2","Pré-diabetes"]
+  },
+  "GLICOSE":{
+    oque:"Glicemia de jejum — concentração de glicose no sangue após 8–12 h sem ingestão calórica.",
+    ref:"< 100 mg/dL normal · 100–125 mg/dL pré-diabetes · ≥ 126 mg/dL DM2",
+    acima:"Hiperglicemia de jejum. Dois valores ≥ 126 mg/dL confirmam DM2. Associa-se a resistência insulínica, obesidade e sedentarismo.",
+    abaixo:"Hipoglicemia — excesso de insulina, insuficiência adrenal ou hepática grave.",
+    condicoes:["DM2","Pré-diabetes","Síndrome metabólica","Hipoglicemia"]
+  },
+  "GLICEMIA DE JEJUM":{
+    oque:"Glicemia de jejum — concentração de glicose após 8–12 h de jejum.",
+    ref:"< 100 mg/dL normal · 100–125 mg/dL pré-diabetes · ≥ 126 mg/dL DM2",
+    acima:"Hiperglicemia de jejum. Dois valores ≥ 126 mg/dL confirmam DM2.",
+    abaixo:"Hipoglicemia de jejum — investigar excesso de insulina ou hepatopatia.",
+    condicoes:["DM2","Pré-diabetes","Síndrome metabólica"]
+  },
+  "TRIGLICÉRIDES":{
+    oque:"Lipídeos de reserva energética. Elevação reflete excesso de carboidratos, resistência insulínica e risco cardiovascular.",
+    ref:"< 150 mg/dL desejável · 150–199 limítrofe · 200–499 alto · ≥ 500 muito alto",
+    acima:"Hipertrigliceridemia. Frequentemente associada a DM2, obesidade e síndrome metabólica. Acima de 500 mg/dL há risco de pancreatite aguda.",
+    abaixo:"Incomum; pode ocorrer em hipertireoidismo ou desnutrição.",
+    condicoes:["Dislipidemia","Síndrome metabólica","DM2","Risco cardiovascular"]
+  },
+  "FRAÇÃO DO COLESTEROL - VLDL":{
+    oque:"Lipoproteína de muito baixa densidade — transporta triglicérides do fígado para os tecidos. Calculado como TG/5.",
+    ref:"< 30 mg/dL",
+    acima:"Reflete hipertrigliceridemia. VLDL elevado é marcador de dislipidemia aterogênica e resistência insulínica.",
+    abaixo:"Sem significado clínico relevante quando isolado.",
+    condicoes:["Dislipidemia aterogênica","Síndrome metabólica","DM2"]
+  },
+  "LDL":{
+    oque:"Lipoproteína de baixa densidade — principal transportador de colesterol. Principal alvo terapêutico cardiovascular.",
+    ref:"< 130 mg/dL geral · < 100 mg/dL risco moderado · < 70 mg/dL alto risco/DM2",
+    acima:"Dislipidemia com risco aterosclerótico aumentado. LDL oxidado deposita-se nas artérias, formando placa aterosclerótica.",
+    abaixo:"Em geral benéfico; valores muito baixos podem indicar malabsorção ou hepatopatia grave.",
+    condicoes:["Dislipidemia","Doença arterial coronariana","Aterosclerose"]
+  },
+  "COLESTEROL TOTAL":{
+    oque:"Soma de todas as frações de colesterol. Avalia risco cardiovascular global.",
+    ref:"< 190 mg/dL desejável",
+    acima:"Hipercolesterolemia — avaliar frações (LDL, HDL, VLDL) para identificar o componente predominante.",
+    abaixo:"Valores muito baixos: investigar desnutrição, hipertireoidismo ou hepatopatia grave.",
+    condicoes:["Dislipidemia","Risco cardiovascular"]
+  },
+  "HDL":{
+    oque:"Lipoproteína de alta densidade — faz o transporte reverso de colesterol, removendo-o das artérias. Fator protetor cardiovascular.",
+    ref:"> 40 mg/dL (♂) · > 50 mg/dL (♀) · ≥ 60 mg/dL protetor",
+    acima:"Favorável — HDL elevado é protetor cardiovascular.",
+    abaixo:"HDL baixo é fator de risco independente. Associado a sedentarismo, tabagismo, obesidade abdominal e síndrome metabólica.",
+    condicoes:["Síndrome metabólica","Risco cardiovascular aumentado"]
+  },
+  "CREATININA":{
+    oque:"Produto do metabolismo muscular filtrado exclusivamente pelos rins. Marcador de função renal — sobe quando a filtraçao cai.",
+    ref:"0,6–1,2 mg/dL (♂) · 0,5–1,1 mg/dL (♀)",
+    acima:"Indica redução da taxa de filtração glomerular. Marcador tardio — sobe apenas quando ~50 % dos néfrons estão comprometidos. Sempre comparar com TFGe.",
+    abaixo:"Pode refletir baixa massa muscular (idosos, desnutridos) — não indica melhora renal.",
+    condicoes:["DRC","Nefropatia diabética","Hipertensão arterial sistêmica"]
+  },
+  "UREIA":{
+    oque:"Produto do metabolismo proteico, eliminado pelos rins. Marcador de função renal e estado catabólico.",
+    ref:"15–43 mg/dL",
+    acima:"Azotemia — DRC, desidratação, catabolismo aumentado ou dieta hiperproteica. Sintomas urêmicos surgem com valores muito elevados.",
+    abaixo:"Dieta hipoproteica, hepatopatia grave ou hiper-hidratação.",
+    condicoes:["DRC","Desidratação","Nefropatia"]
+  },
+  "TAXA DE FILTRAÇÃO GLOMERULAR ESTIMADA":{
+    oque:"Estima o volume de plasma filtrado pelos rins por minuto. Calculada pela equação CKD-EPI 2021 a partir de creatinina, idade e sexo.",
+    ref:"≥ 90 G1 · 60–89 G2 · 45–59 G3a · 30–44 G3b · 15–29 G4 · < 15 G5 (mL/min/1,73m²)",
+    acima:"Hiperfiltração glomerular — pode ocorrer nos estágios iniciais da nefropatia diabética.",
+    abaixo:"Redução da função renal. G3+ indica DRC estabelecida. Cada estádio abaixo de G2 multiplica o risco cardiovascular e de progressão.",
+    condicoes:["DRC","Nefropatia diabética","Nefroesclerose hipertensiva"]
+  },
+  "ÁCIDO ÚRICO":{
+    oque:"Produto final do metabolismo das purinas, excretado pelos rins. Acima de 7 mg/dL pode cristalizar nas articulações e túbulos renais.",
+    ref:"2,5–6,2 mg/dL (♀) · 3,5–7,2 mg/dL (♂)",
+    acima:"Hiperuricemia. Risco de gota, nefrolitíase por urato e nefropatia. Associada a síndrome metabólica, DRC e uso de diuréticos.",
+    abaixo:"Raro; pode indicar doença de Wilson ou uricosúricos.",
+    condicoes:["Gota","DRC","Síndrome metabólica","Nefrolitíase"]
+  },
+  "HEMOGLOBINA":{
+    oque:"Proteína eritrocitária transportadora de oxigênio. Marcador central para diagnóstico e classificação de anemia.",
+    ref:"12,0–16,0 g/dL (♀) · 13,5–17,5 g/dL (♂)",
+    acima:"Policitemia — desidratação, doença pulmonar crônica ou policitemia vera.",
+    abaixo:"Anemia. Investigar: ferropriva (RDW↑, VCM↓), megaloblástica (VCM↑), doença crônica (ferritina N/↑), hemolítica.",
+    condicoes:["Anemia ferropriva","Anemia de doença crônica","DRC"]
+  },
+  "FERRITINA":{
+    oque:"Principal proteína de armazenamento de ferro. Também é reagente de fase aguda — sobe em inflamações independente do estoque de ferro.",
+    ref:"12–150 ng/mL (♀) · 12–300 ng/mL (♂)",
+    acima:"Sobrecarga de ferro (hemocromatose), inflamação aguda/crônica, hepatopatia ou neoplasia. Não descarta ferropenia quando há inflamação.",
+    abaixo:"Depleção de estoque de ferro — primeiro marcador a cair na deficiência, antes da hemoglobina. Confirma anemia ferropriva.",
+    condicoes:["Anemia ferropriva","Hemocromatose","Inflamação crônica"]
+  },
+  "VCM":{
+    oque:"Volume Corpuscular Médio — tamanho médio das hemácias. Classifica o tipo morfológico de anemia.",
+    ref:"80–100 fL",
+    acima:"Macrocitose — hemácias grandes. Investigar deficiência de B12/folato, hepatopatia, hipotireoidismo ou alcoolismo.",
+    abaixo:"Microcitose — hemácias pequenas. Anemia ferropriva é a causa mais comum. Outras: talassemia, anemia sideroblástica.",
+    condicoes:["Anemia ferropriva","Anemia megaloblástica","Talassemia"]
+  },
+  "RDW":{
+    oque:"Red Cell Distribution Width — amplitude de distribuição eritrocitária. Mede a variação de tamanho das hemácias (anisocitose).",
+    ref:"11–15 %",
+    acima:"Anisocitose — hemácias de tamanhos muito variados. Sugestivo de anemia ferropriva, deficiência de B12/folato ou anemia mista.",
+    abaixo:"Sem relevância clínica isolada.",
+    condicoes:["Anemia ferropriva","Deficiência de B12/folato","Anemia mista"]
+  },
+  "ERITRÓCITOS":{
+    oque:"Contagem de eritrócitos (glóbulos vermelhos) no sangue periférico.",
+    ref:"4,2–5,4 milhões/mm³ (♀) · 4,5–5,9 milhões/mm³ (♂)",
+    acima:"Poliglobulia — DPOC, altitude elevada ou policitemia vera.",
+    abaixo:"Anemia — redução da capacidade de transporte de O₂.",
+    condicoes:["Anemia","Policitemia"]
+  },
+  "MONÓCITOS":{
+    oque:"Células fagocitárias que participam da resposta inflamatória crônica e da vigilância tecidual.",
+    ref:"0–900 /mm³ (2–10 %)",
+    acima:"Monocitose — infecções crônicas (tuberculose, endocardite), doenças inflamatórias ou síndromes mieloproliferativas.",
+    abaixo:"Monocitopenia — aplasia medular ou corticoterapia em doses altas.",
+    condicoes:["Infecção crônica","Inflamação crônica","Síndromes mieloproliferativas"]
+  },
+  "POTASSIO":{
+    oque:"Principal cátion intracelular. Fundamental para o potencial de membrana cardíaco e muscular.",
+    ref:"3,5–5,1 mmol/L",
+    acima:"Hipercalemia — risco de arritmias graves e parada cardíaca. Causas: DRC, IECA/BRA, espironolactona, acidose.",
+    abaixo:"Hipocalemia — fraqueza muscular, cãibras, arritmias. Diuréticos de alça, diarreia, vômitos.",
+    condicoes:["DRC","Arritmia","Uso de diuréticos"]
+  },
+  "CÁLCIO SÉRICO":{
+    oque:"Mineral essencial para função neuromuscular, coagulação e mineralização óssea.",
+    ref:"8,5–10,2 mg/dL (total)",
+    acima:"Hipercalcemia — hiperparatireoidismo, neoplasias com metástase óssea, intoxicação por vitamina D.",
+    abaixo:"Hipocalcemia — hipoparatireoidismo, deficiência de vitamina D, DRC avançada. Risco de tetania e convulsões.",
+    condicoes:["Hiperparatireoidismo","DRC","Deficiência de vitamina D"]
+  },
+  "CREATINOQUINASE":{
+    oque:"Enzima muscular (CK) liberada na lesão de músculo esquelético ou cardíaco.",
+    ref:"< 190 U/L (♀) · < 308 U/L (♂)",
+    acima:"Miopatia — hipotireoidismo, rabdomiólise, miosite por estatinas, polimiosite. Isoforma CK-MB indica lesão miocárdica.",
+    abaixo:"Sem relevância clínica.",
+    condicoes:["Miopatia por estatina","Hipotireoidismo","Rabdomiólise"]
+  },
+  "GGT":{
+    oque:"Gama-glutamiltransferase — enzima hepática e biliar. Marcador sensível de doença hepatobiliar e alcoolismo.",
+    ref:"< 36 U/L (♀) · < 61 U/L (♂)",
+    acima:"Colestase, doença hepática alcoólica ou não-alcoólica (DHGNA), medicamentos hepatotóxicos, obesidade.",
+    abaixo:"Sem significado clínico.",
+    condicoes:["Hepatopatia alcoólica","DHGNA","Colestase"]
+  },
+  "TSH":{
+    oque:"Hormônio estimulante da tireoide (hipofisário). Regulador central da função tireoidiana — sobe quando a tireoide produz pouco.",
+    ref:"0,4–4,0 mUI/L",
+    acima:"Hipotireoidismo primário — hipófise aumenta TSH para compensar tireoide insuficiente. Sintomas: fadiga, ganho de peso, bradicardia, constipação.",
+    abaixo:"Hipertireoidismo ou supressão por T4 exógeno. Sintomas: palpitações, perda de peso, tremores, ansiedade.",
+    condicoes:["Hipotireoidismo","Hipertireoidismo","Tireoidopatia"]
+  },
+  "T4 LIVRE":{
+    oque:"Fração livre (ativa) da tiroxina. Melhor indicador da função tireoidiana real.",
+    ref:"0,8–1,8 ng/dL",
+    acima:"Hipertireoidismo ou dose suprafisiológica de levotiroxina.",
+    abaixo:"Hipotireoidismo secundário (central) ou hipotireoidismo primário grave.",
+    condicoes:["Hipotireoidismo","Hipertireoidismo"]
+  },
+  "DENSIDADE":{
+    oque:"Capacidade de concentração urinária. Reflete estado de hidratação e função tubular renal.",
+    ref:"1.005–1.030",
+    acima:"Urina concentrada — desidratação, insuficiência cardíaca, síndrome nefrótica.",
+    abaixo:"Urina diluída — hiper-hidratação, diabetes insipidus, DRC avançada com perda da concentração tubular.",
+    condicoes:["Desidratação","DRC","Diabetes insipidus"]
+  },
+  "PESQUISA DE SANGUE OCULTO NAS FEZES":{
+    oque:"Detecta sangue microscópico nas fezes — rastreio de neoplasia colorretal e patologias do trato GI.",
+    ref:"Negativo",
+    acima:"Positivo — sangramento no trato GI. Causas: câncer colorretal, pólipo, gastrite, úlcera, doença inflamatória intestinal. Indicação de colonoscopia.",
+    abaixo:"N/A",
+    condicoes:["Câncer colorretal","Pólipos","Doença inflamatória intestinal","Úlcera péptica"]
+  }
+};
+
+// ── Lookup por nome normalizado ───────────────────────────────────────────────
+function _adLookup(nome){
+  const n = nome.toUpperCase().replace(/^(HEMOGRAMA|URINA)\s*[-–]\s*/i,'').trim();
+  if(_ADINFO[n]) return _ADINFO[n];
+  // busca parcial pelo começo do nome
+  const key = Object.keys(_ADINFO).find(k => n.startsWith(k) || k.startsWith(n.substring(0,8)));
+  return key ? _ADINFO[key] : null;
+}
+
+// ── Estado do drawer ──────────────────────────────────────────────────────────
+let _ADDATA = {};
+let _adIdx  = 0;
+
+function _adOpen(idx){
+  const a = _ADDATA[idx];
+  if(!a) return;
+  const info   = _adLookup(a.nome);
+  const gc     = GC[a.grupo] || 'var(--muted)';
+  const arrow  = a.direcao==='ACIMA'?'↑':a.direcao==='ABAIXO'?'↓':'·';
+  const arrowC = a.direcao==='ACIMA'?'var(--ava)':a.direcao==='ABAIXO'?'var(--rev)':'var(--muted)';
+  const nomeFmt = a.nome.replace(/^HEMOGRAMA\s*[-–]\s*/i,'').replace(/^URINA\s*[-–]\s*/i,'');
+
+  let html = `
+    <div class="ad-nome" style="color:${gc};padding-right:32px">${nomeFmt}</div>
+    <div class="ad-grupo">${a.grupo} · +${a.peso}pt</div>
+    <div class="ad-val-row">
+      <span class="ad-val" style="color:${arrowC}">${arrow} ${a.valor}</span>
+      ${a.unidade?`<span class="ad-uni">${a.unidade}</span>`:''}
+      ${a.referencia?`<span class="ad-ref">ref: ${a.referencia}</span>`:''}
+    </div>`;
+
+  if(info){
+    html += `
+    <div class="ad-sec">
+      <div class="ad-sec-title">O que é</div>
+      <div class="ad-sec-body">${info.oque}</div>
+    </div>
+    <div class="ad-sec">
+      <div class="ad-sec-title">Intervalo de referência</div>
+      <div class="ad-ref-box">${info.ref}</div>
+    </div>
+    <div class="ad-sec">
+      <div class="ad-sec-title" style="color:${arrowC}">Significado — valor ${a.direcao==='ACIMA'?'acima':'abaixo'} da referência</div>
+      <div class="ad-sec-body">${a.direcao==='ACIMA'?info.acima:info.abaixo}</div>
+    </div>
+    <div class="ad-sec">
+      <div class="ad-sec-title">Condições associadas</div>
+      <div class="ad-tags">${(info.condicoes||[]).map(c=>`<span class="ad-tag">${c}</span>`).join('')}</div>
+    </div>`;
+  } else {
+    html += `<div style="font-size:12px;color:var(--faint);margin-top:8px;font-family:'IBM Plex Mono',monospace">Sem descrição clínica catalogada para este analito.</div>`;
+  }
+
+  document.getElementById('ad-drawer-content').innerHTML = html;
+  document.getElementById('ad-overlay').classList.add('open');
+  document.getElementById('ad-drawer').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function _adClose(){
+  document.getElementById('ad-overlay').classList.remove('open');
+  document.getElementById('ad-drawer').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', e => { if(e.key==='Escape') _adClose(); });
+</script>
+</body>
+</html>
